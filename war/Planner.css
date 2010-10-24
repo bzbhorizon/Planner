@@ -18,14 +18,15 @@
 	font-size: 40pt;
 }
 
-#headContainer, #footContainer, #bodyContainer {
+#headContainer, #footContainer {
 	margin: 0px;
-	background-color: white;
+	background-color: rgba(255,255,255,0.8);
 	padding: 20px;
 	color: #000033;
 }
 
 #bodyContainer {
-	margin: 30px;
-	border-bottom: 2px solid white;
+	margin: 10px 0px;
+	padding: 30px;
+	background-color: rgba(255,255,255,0.3);
 }

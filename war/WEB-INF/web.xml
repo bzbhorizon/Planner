@@ -4,8 +4,16 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-  
+
   <!-- Servlets -->
+  <servlet>
+    <servlet-name>openIdServlet</servlet-name>
+    <servlet-class>bzb.gwt.planner.server.OpenIdServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>openIdServlet</servlet-name>
+    <url-pattern>/planner/openid</url-pattern>
+  </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>
