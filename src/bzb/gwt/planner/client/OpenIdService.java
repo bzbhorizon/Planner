@@ -1,6 +1,5 @@
 package bzb.gwt.planner.client;
 
-import bzb.gwt.planner.shared.User;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -11,5 +10,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("openid")
 public interface OpenIdService extends RemoteService {
 	String getOpenIdEndpoint();
-	User verifyAuth(String auth);
+	CUser verifyAuth(String auth);
 }

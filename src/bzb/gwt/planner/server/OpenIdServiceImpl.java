@@ -1,7 +1,5 @@
 package bzb.gwt.planner.server;
 
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,14 +15,13 @@ import org.openid4java.discovery.Identifier;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.MessageException;
-import org.openid4java.message.Parameter;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
 
 import bzb.gwt.planner.client.OpenIdService;
-import bzb.gwt.planner.shared.User;
+import bzb.gwt.planner.client.CUser;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -36,6 +33,8 @@ public class OpenIdServiceImpl extends RemoteServiceServlet implements
 		OpenIdService {
 	
 	private static ConsumerManager manager;
+	
+	private static final String RETURN_TO_PATH = "http://127.0.0.1:8888/Planner.html?gwt.codesvr=127.0.0.1:9997&";
 
 	public String getOpenIdEndpoint() {
 		String auth = null;
@@ -55,7 +54,7 @@ public class OpenIdServiceImpl extends RemoteServiceServlet implements
 					session.setAttribute("openid-disc", discovered);
 					
 					// obtain a AuthRequest message to be sent to the OpenID provider
-		            AuthRequest authReq = manager.authenticate(discovered, "http://127.0.0.1:8888/Planner.html?gwt.codesvr=127.0.0.1:9997&state=auth");
+		            AuthRequest authReq = manager.authenticate(discovered, RETURN_TO_PATH + "state=auth");
 
 		            // Attribute Exchange example: fetching the 'email' attribute
 		            FetchRequest fetch = FetchRequest.createFetchRequest();
@@ -85,7 +84,7 @@ public class OpenIdServiceImpl extends RemoteServiceServlet implements
 		return auth;
 	}
 	
-	public User verifyAuth (String auth) {
+	public CUser verifyAuth (String auth) {
 		try {
             // extract the parameters from the authentication response
             // (which comes in as a HTTP request from the OpenID provider)
@@ -107,7 +106,7 @@ public class OpenIdServiceImpl extends RemoteServiceServlet implements
                 AuthSuccess authSuccess =
                         (AuthSuccess) verification.getAuthResponse();
 
-                User user = new User();
+                CUser user = new CUser();
                 
                 if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
                     FetchResponse fetchResp = (FetchResponse) authSuccess
