@@ -2,6 +2,7 @@ package bzb.gwt.planner.client;
 
 import bzb.gwt.planner.client.panels.HeadNavPanel;
 import bzb.gwt.planner.client.panels.LoginPanel;
+import bzb.gwt.planner.client.panels.TripsPanel;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.Panel;
@@ -13,11 +14,14 @@ public class Planner implements EntryPoint {
 	private static State state = State.WELCOME;
 	
 	private static CUser user;
+	
+	private static ActivityIndicator ai;
 
 	public void onModuleLoad() {
 		/*Calendar calendar = new Calendar();
 		calendar.setDate(new Date()); //calendar date, not required
 		calendar.setDays(7); //number of days displayed at a time, not required*/
+		ai = new ActivityIndicator();
 		updateContent();
 	}
 	
@@ -27,16 +31,22 @@ public class Planner implements EntryPoint {
 	}
 	
 	public static void updateContent () {
+		showActivityIndicator();
+		
 		RootPanel.get("bodyContainer").clear();
 		RootPanel.get("bodyContainer").add(getBodyPanel());
 		
 		RootPanel.get("headContainer").clear();
 		RootPanel.get("headContainer").add(new HeadNavPanel());
+		
+		hideActivityIndicator();
 	}
 	
 	private static Panel getBodyPanel() {
 		if (state == State.WELCOME) {
 			return new LoginPanel();
+		} else if (state == State.TRIPS) {
+			return new TripsPanel();
 		} else {
 			return null;
 		}
@@ -56,5 +66,13 @@ public class Planner implements EntryPoint {
 
 	public static State getState() {
 		return state;
+	}
+	
+	public static void showActivityIndicator () {
+		ai.center();
+	}
+	
+	public static void hideActivityIndicator () {
+		ai.hide();
 	}
 }

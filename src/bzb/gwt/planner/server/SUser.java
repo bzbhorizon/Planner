@@ -1,7 +1,5 @@
 package bzb.gwt.planner.server;
 
-import java.io.Serializable;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -9,13 +7,9 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import bzb.gwt.planner.server.PMF;
-
 
 @PersistenceCapable
-public class SUser implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class SUser {
 
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -35,16 +29,19 @@ public class SUser implements Serializable {
 	@Persistent
 	private String homeCountry;
 
-	@Persistent(serialized = "true")
-	private GENDER gender;
+	@Persistent
+	private boolean male;
 	
 	@Persistent
 	private int age;
 	
-	public static enum GENDER { MALE, FEMALE }
-	
-	public SUser () {
-		
+	public SUser (String userAuth, String username, String fullName, String homeCountry, boolean male, int age) {
+		setUserAuth(userAuth);
+		setUsername(username);
+		setFullName(fullName);
+		setHomeCountry(homeCountry);
+		setMale(male);
+		setAge(age);
 	}
 	
 	public void save () {
@@ -54,11 +51,6 @@ public class SUser implements Serializable {
         } finally {
             pm.close();
         }
-	}
-	
-	public boolean isRegistered () {
-		System.out.println("Implement");
-		return false;
 	}
 
 	public void setUsername(String username) {
@@ -93,12 +85,12 @@ public class SUser implements Serializable {
 		return homeCountry;
 	}
 
-	public void setGender(GENDER gender) {
-		this.gender = gender;
+	public void setMale(boolean male) {
+		this.male = male;
 	}
 
-	public GENDER getGender() {
-		return gender;
+	public boolean getMale() {
+		return male;
 	}
 
 	public void setAge(int age) {
