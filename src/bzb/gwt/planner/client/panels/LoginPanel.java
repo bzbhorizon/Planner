@@ -2,13 +2,13 @@ package bzb.gwt.planner.client.panels;
 
 import java.util.Date;
 
-import bzb.gwt.planner.client.CUser;
 import bzb.gwt.planner.client.OpenIdService;
 import bzb.gwt.planner.client.OpenIdServiceAsync;
 import bzb.gwt.planner.client.Planner;
-import bzb.gwt.planner.client.SaveService;
-import bzb.gwt.planner.client.SaveServiceAsync;
+import bzb.gwt.planner.client.DatastoreService;
+import bzb.gwt.planner.client.DatastoreServiceAsync;
 import bzb.gwt.planner.client.Planner.State;
+import bzb.gwt.planner.client.data.CUser;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,7 +35,7 @@ public class LoginPanel extends FlowPanel {
 	 * service.
 	 */
 	private static final OpenIdServiceAsync openidService = GWT.create(OpenIdService.class);
-	private static final SaveServiceAsync saveService = GWT.create(SaveService.class);
+	private static final DatastoreServiceAsync saveService = GWT.create(DatastoreService.class);
 	
 	private static final int AGEBOX_YEAR_ZERO = 1900;
 	private static final int AVERAGE_AGE = 27;
@@ -57,17 +57,20 @@ public class LoginPanel extends FlowPanel {
 							
 							final VerticalPanel vp = new VerticalPanel();
 					
-							saveService.checkUser(Planner.getUser().getUserAuth(), new AsyncCallback<String>() {
+							saveService.checkUser(Planner.getUser().getUserAuth(), new AsyncCallback<CUser>() {
 								public void onFailure(Throwable caught) {
 									// Show the RPC error message to the user
 									caught.printStackTrace();
 									System.out.println("Remote Procedure Call - Failure");
 								}
 
-								public void onSuccess(String encodedKey) {
-									if (encodedKey != null) {
+								public void onSuccess(CUser foundUser) {
+									if (foundUser != null) {
+										Planner.setUser(foundUser);
+										vp.add(new HTML("Welcome " + Planner.getUser().getFullName()));
+										
 										Button done = new Button();
-									    done.setText("Done");
+									    done.setText("Show trips");
 									    done.addClickHandler(new ClickHandler() {
 			
 											public void onClick(ClickEvent event) {
@@ -380,17 +383,25 @@ public class LoginPanel extends FlowPanel {
 									    done.addClickHandler(new ClickHandler() {
 			
 											public void onClick(ClickEvent event) {
+												boolean complete = true;
 												Planner.getUser().setAge(THIS_YEAR - ageBox.getSelectedIndex());
-												Planner.getUser().setFullName(fullnameBox.getText());
+												if (fullnameBox.getText().length() > 0) {
+													Planner.getUser().setFullName(fullnameBox.getText());
+												} else if (complete) {
+													fullnameBox.addStyleName("incomplete");
+													complete = false;
+												}
 												if (genderBox.getSelectedIndex() == 0) {
 													Planner.getUser().setMale(true);
 												} else {
 													Planner.getUser().setMale(false);
 												}
 												Planner.getUser().setHomeCountry(homeCountryBox.getItemText(homeCountryBox.getSelectedIndex()));
-												Planner.getUser().save();
 												
-												Planner.updateContent(State.TRIPS);
+												if (complete) {
+													Planner.getUser().save();
+													Planner.updateContent(State.TRIPS);
+												}
 											}
 									    	
 									    });

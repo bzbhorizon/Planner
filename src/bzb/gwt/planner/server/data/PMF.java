@@ -1,4 +1,4 @@
-package bzb.gwt.planner.server;
+package bzb.gwt.planner.server.data;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;

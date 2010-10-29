@@ -1,5 +1,6 @@
 package bzb.gwt.planner.client;
 
+import bzb.gwt.planner.client.data.CUser;
 import bzb.gwt.planner.client.panels.HeadNavPanel;
 import bzb.gwt.planner.client.panels.LoginPanel;
 import bzb.gwt.planner.client.panels.TripsPanel;

@@ -1,6 +1,10 @@
-package bzb.gwt.planner.client;
+package bzb.gwt.planner.client.data;
 
 import java.io.Serializable;
+import java.util.List;
+
+import bzb.gwt.planner.client.DatastoreService;
+import bzb.gwt.planner.client.DatastoreServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,13 +20,14 @@ public class CUser implements Serializable {
 	private String homeCountry;
 	private boolean male;
 	private int age;
+	private List<CTrip> trips;
 
 	public CUser() {
 
 	}
 	
 	public void save() {
-		((SaveServiceAsync)GWT.create(SaveService.class)).saveUser(this, new AsyncCallback<String>() {
+		((DatastoreServiceAsync)GWT.create(DatastoreService.class)).saveUser(this, new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
 				// Show the RPC error message to the user
 				caught.printStackTrace();
@@ -90,6 +95,14 @@ public class CUser implements Serializable {
 
 	public String getEncodedUsername() {
 		return encodedUsername;
+	}
+
+	public void setTrips(List<CTrip> trips) {
+		this.trips = trips;
+	}
+
+	public List<CTrip> getTrips() {
+		return trips;
 	}
 
 }

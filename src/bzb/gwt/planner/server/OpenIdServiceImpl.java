@@ -21,7 +21,7 @@ import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
 
 import bzb.gwt.planner.client.OpenIdService;
-import bzb.gwt.planner.client.CUser;
+import bzb.gwt.planner.client.data.CUser;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

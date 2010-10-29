@@ -1,6 +1,8 @@
 package bzb.gwt.planner.client;
 
 
+import bzb.gwt.planner.client.data.CUser;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**

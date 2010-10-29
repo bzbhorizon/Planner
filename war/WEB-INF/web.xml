@@ -16,11 +16,11 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>saveServlet</servlet-name>
-    <servlet-class>bzb.gwt.planner.server.SaveServiceImpl</servlet-class>
+    <servlet-name>datastoreServlet</servlet-name>
+    <servlet-class>bzb.gwt.planner.server.DatastoreServiceImpl</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>saveServlet</servlet-name>
+    <servlet-name>datastoreServlet</servlet-name>
     <url-pattern>/planner/save</url-pattern>
   </servlet-mapping>
   
