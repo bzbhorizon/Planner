@@ -1,4 +1,10 @@
-<!-- Indices written at Fri, 29 Oct 2010 20:11:23 UTC -->
+<!-- Indices written at Fri, 29 Oct 2010 21:49:26 UTC -->
 
-<datastore-indexes/>
+<datastore-indexes>
 
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="STrip" ancestor="true" source="auto">
+        <property name="trips_INTEGER_IDX" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>

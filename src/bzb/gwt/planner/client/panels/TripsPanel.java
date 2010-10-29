@@ -9,8 +9,12 @@ import com.google.gwt.user.client.ui.HTML;
 public class TripsPanel extends FlowPanel {
 
 	public TripsPanel () {
-		for (CTrip trip : Planner.getUser().getTrips()) {
-			add(new HTML(trip.getName()));
+		if (Planner.getUser().getTrips() != null) {
+			for (CTrip trip : Planner.getUser().getTrips()) {
+				add(new HTML(trip.getName()));
+			}
+		} else {
+			add (new HTML("No trips"));
 		}
 	}
 	

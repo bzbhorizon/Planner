@@ -55,7 +55,7 @@ public class STrip {
 		CTrip trip = new CTrip();
 		trip.setCreator(getCreator().getCUser());
 		trip.setName(getName());
-		trip.setTripId(getTripId());
+		trip.setTripId(getTripId().getId());
 		return trip;
 	}
 	

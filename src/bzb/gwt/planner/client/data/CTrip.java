@@ -1,10 +1,8 @@
 package bzb.gwt.planner.client.data;
 
-import com.google.appengine.api.datastore.Key;
-
 public class CTrip {
 	
-    private Key tripId;
+    private long tripId;
     private CUser creator;
 	private String name;
 	
@@ -20,11 +18,11 @@ public class CTrip {
 		return name;
 	}
 
-	public void setTripId(Key tripId) {
+	public void setTripId(long tripId) {
 		this.tripId = tripId;
 	}
 
-	public Key getTripId() {
+	public long getTripId() {
 		return tripId;
 	}
 
