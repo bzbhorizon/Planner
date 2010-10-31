@@ -5,6 +5,7 @@ import java.util.List;
 
 import bzb.gwt.planner.client.DatastoreService;
 import bzb.gwt.planner.client.DatastoreServiceAsync;
+import bzb.gwt.planner.client.Planner;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,16 +28,18 @@ public class CUser implements Serializable {
 	}
 	
 	public void save() {
+		Planner.showActivityIndicator();
 		((DatastoreServiceAsync)GWT.create(DatastoreService.class)).saveUser(this, new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
 				// Show the RPC error message to the user
 				caught.printStackTrace();
 				System.out.println("Remote Procedure Call - Failure");
+				Planner.hideActivityIndicator();
 			}
 
 			public void onSuccess(String encodedUsername) {
 				setEncodedUsername(encodedUsername);
-				
+				Planner.hideActivityIndicator();
 			}
 		});
 	}

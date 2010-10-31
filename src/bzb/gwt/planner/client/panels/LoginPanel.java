@@ -2,11 +2,11 @@ package bzb.gwt.planner.client.panels;
 
 import java.util.Date;
 
+import bzb.gwt.planner.client.DatastoreService;
+import bzb.gwt.planner.client.DatastoreServiceAsync;
 import bzb.gwt.planner.client.OpenIdService;
 import bzb.gwt.planner.client.OpenIdServiceAsync;
 import bzb.gwt.planner.client.Planner;
-import bzb.gwt.planner.client.DatastoreService;
-import bzb.gwt.planner.client.DatastoreServiceAsync;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.data.CUser;
 
@@ -20,7 +20,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -28,7 +27,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class LoginPanel extends FlowPanel {
+public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
@@ -43,6 +42,7 @@ public class LoginPanel extends FlowPanel {
 
 	public LoginPanel() {
 		if (Window.Location.getParameter("state") != null && Window.Location.getParameter("state").equals("auth")) {
+			Planner.showActivityIndicator();
 			openidService.verifyAuth(Window.Location.getHref(),
 					new AsyncCallback<CUser>() {
 						public void onFailure(Throwable caught) {
@@ -50,6 +50,7 @@ public class LoginPanel extends FlowPanel {
 							caught.printStackTrace();
 							System.out
 									.println("Remote Procedure Call - Failure");
+							Planner.hideActivityIndicator();
 						}
 
 						public void onSuccess(CUser user) {
@@ -62,23 +63,13 @@ public class LoginPanel extends FlowPanel {
 									// Show the RPC error message to the user
 									caught.printStackTrace();
 									System.out.println("Remote Procedure Call - Failure");
+									Planner.hideActivityIndicator();
 								}
 
 								public void onSuccess(CUser foundUser) {
 									if (foundUser != null) {
 										Planner.setUser(foundUser);
-										vp.add(new HTML("Welcome " + Planner.getUser().getFullName()));
-										
-										Button done = new Button();
-									    done.setText("Show trips");
-									    done.addClickHandler(new ClickHandler() {
-			
-											public void onClick(ClickEvent event) {
-												Planner.updateContent(State.TRIPS);
-											}
-									    	
-									    });
-									    vp.add(done);
+										Planner.updateContent(State.HQ);
 									} else {
 										HorizontalPanel hpAge = new HorizontalPanel();
 										hpAge.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -405,14 +396,17 @@ public class LoginPanel extends FlowPanel {
 											}
 									    	
 									    });
-									    vp.add(done);
+									    vp.add(done);									   
 									}
+									Planner.hideActivityIndicator();
 								}
 							});
 							
 							add(vp);
 						}
 					});
+		} else if (Planner.getUser() != null) {
+			Planner.updateContent(State.HQ);
 		} else {
 			final Button sendButton = new Button("Log in");
 			add(sendButton);
@@ -440,6 +434,7 @@ public class LoginPanel extends FlowPanel {
 				 * response.
 				 */
 				private void getOpenIdEndpoint() {
+					Planner.showActivityIndicator();
 					sendButton.setEnabled(false);
 					openidService.getOpenIdEndpoint(
 							new AsyncCallback<String>() {
@@ -448,10 +443,12 @@ public class LoginPanel extends FlowPanel {
 									caught.printStackTrace();
 									System.out
 											.println("Remote Procedure Call - Failure");
+									Planner.hideActivityIndicator();
 								}
 
 								public void onSuccess(String result) {
 									Window.Location.assign(result);
+									Planner.hideActivityIndicator();
 								}
 							});
 				}
@@ -460,6 +457,10 @@ public class LoginPanel extends FlowPanel {
 			MyHandler handler = new MyHandler();
 			sendButton.addClickHandler(handler);
 		}
+	}
+
+	public HorizontalPanel getNav() {
+		return getHQNav();
 	}
 
 }
