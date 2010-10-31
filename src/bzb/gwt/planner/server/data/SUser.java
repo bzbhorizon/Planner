@@ -1,8 +1,5 @@
 package bzb.gwt.planner.server.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -10,7 +7,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.data.CUser;
 
 @PersistenceCapable
@@ -40,8 +36,9 @@ public class SUser {
 	@Persistent
 	private int age;
 	
-	@Persistent(mappedBy = "creator")
-	private List<STrip> trips;
+	public SUser () {
+		
+	}
 	
 	public SUser (String userAuth, String username, String fullName, String homeCountry, boolean male, int age) {
 		setUserAuth(userAuth);
@@ -50,6 +47,11 @@ public class SUser {
 		setHomeCountry(homeCountry);
 		setMale(male);
 		setAge(age);
+	}
+	
+	public SUser (CUser user) {
+		this(user.getUserAuth(), user.getUsername(), user.getFullName(), user.getHomeCountry(), user.getMale(), user.getAge());
+		setEncodedUsername(user.getEncodedUsername());
 	}
 	
 	public void save () {
@@ -125,20 +127,7 @@ public class SUser {
 		user.setMale(getMale());
 		user.setUserAuth(getUserAuth());
 		user.setUsername(getUsername());
-		List<CTrip> trips = new ArrayList<CTrip>();
-		for (STrip trip : getTrips()) {
-			trips.add(trip.getCTrip());
-		}
-		user.setTrips(trips);
 		return user;
-	}
-
-	public void setTrips(List<STrip> trips) {
-		this.trips = trips;
-	}
-
-	public List<STrip> getTrips() {
-		return trips;
 	}
 
 }

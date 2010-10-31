@@ -18,13 +18,18 @@ public class STrip {
     private Key tripId;
 	
 	@Persistent
-	private SUser creator;
+	private String encodedUsername;
 	
 	@Persistent
 	private String name;
 	
 	public STrip () {
 		
+	}
+	
+	public STrip (CTrip trip) {
+		setEncodedUsername(trip.getEncodedUsername());
+		setName(trip.getName());
 	}
 
 	public void setName(String name) {
@@ -42,21 +47,17 @@ public class STrip {
 	public Key getTripId() {
 		return tripId;
 	}
-
-	public void setCreator(SUser creator) {
-		this.creator = creator;
-	}
-
-	public SUser getCreator() {
-		return creator;
-	}
 	
 	public CTrip getCTrip () {
-		CTrip trip = new CTrip();
-		trip.setCreator(getCreator().getCUser());
-		trip.setName(getName());
-		trip.setTripId(getTripId().getId());
-		return trip;
+		return new CTrip(getName(), getEncodedUsername(), getTripId().getId());
+	}
+
+	public void setEncodedUsername(String encodedUsername) {
+		this.encodedUsername = encodedUsername;
+	}
+
+	public String getEncodedUsername() {
+		return encodedUsername;
 	}
 	
 	public void save () {

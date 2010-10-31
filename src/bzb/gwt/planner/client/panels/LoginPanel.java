@@ -9,6 +9,7 @@ import bzb.gwt.planner.client.OpenIdServiceAsync;
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.data.CUser;
+import bzb.gwt.planner.server.OpenIdServiceImpl;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,8 +34,6 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private static final OpenIdServiceAsync openidService = GWT.create(OpenIdService.class);
-	private static final DatastoreServiceAsync saveService = GWT.create(DatastoreService.class);
 	
 	private static final int AGEBOX_YEAR_ZERO = 1900;
 	private static final int AVERAGE_AGE = 27;
@@ -43,7 +42,7 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 	public LoginPanel() {
 		if (Window.Location.getParameter("state") != null && Window.Location.getParameter("state").equals("auth")) {
 			Planner.showActivityIndicator();
-			openidService.verifyAuth(Window.Location.getHref(),
+			Planner.openidService.verifyAuth(Window.Location.getHref(),
 					new AsyncCallback<CUser>() {
 						public void onFailure(Throwable caught) {
 							// Show the RPC error message to the user
@@ -58,7 +57,7 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 							
 							final VerticalPanel vp = new VerticalPanel();
 					
-							saveService.checkUser(Planner.getUser().getUserAuth(), new AsyncCallback<CUser>() {
+							Planner.saveService.checkUser(Planner.getUser().getUserAuth(), new AsyncCallback<CUser>() {
 								public void onFailure(Throwable caught) {
 									// Show the RPC error message to the user
 									caught.printStackTrace();
@@ -436,7 +435,7 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 				private void getOpenIdEndpoint() {
 					Planner.showActivityIndicator();
 					sendButton.setEnabled(false);
-					openidService.getOpenIdEndpoint(
+					Planner.openidService.getOpenIdEndpoint(
 							new AsyncCallback<String>() {
 								public void onFailure(Throwable caught) {
 									// Show the RPC error message to the user

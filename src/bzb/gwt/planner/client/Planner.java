@@ -7,12 +7,19 @@ import bzb.gwt.planner.client.panels.PlannerPanel;
 import bzb.gwt.planner.client.panels.TripsPanel;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ClosingEvent;
+import com.google.gwt.user.client.Window.ClosingHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class Planner implements EntryPoint {
 	
 	public static enum State {WELCOME, HQ, TRIPS, LOCATIONS, PLANNING};
 	private static State state = State.WELCOME;
+	
+	public static final OpenIdServiceAsync openidService = GWT.create(OpenIdService.class);
+	public static final DatastoreServiceAsync saveService = GWT.create(DatastoreService.class);
 	
 	private static CUser user;
 	
@@ -26,6 +33,7 @@ public class Planner implements EntryPoint {
 		/*Calendar calendar = new Calendar();
 		calendar.setDate(new Date()); //calendar date, not required
 		calendar.setDays(7); //number of days displayed at a time, not required*/
+		
 		ai = new ActivityIndicator();
 		updateContent();
 	}
@@ -51,18 +59,27 @@ public class Planner implements EntryPoint {
 				loginPanel = new LoginPanel();
 			}
 			return loginPanel;
-		} else if (state == State.HQ) {
-			if (hqPanel == null) {
-				hqPanel = new HQPanel();
-			}
-			return hqPanel;
-		} else if (state == State.TRIPS) {
-			if (tripsPanel == null) {
-				tripsPanel = new TripsPanel();
-			}
-			return tripsPanel;
 		} else {
-			return null;
+			Window.addWindowClosingHandler(new ClosingHandler() {
+				public void onWindowClosing(ClosingEvent event) {
+					event.setMessage("Don't leave");
+				}
+			});
+			
+			if (state == State.HQ) {
+				if (hqPanel == null) {
+					hqPanel = new HQPanel();
+				}
+				return hqPanel;
+			} else if (state == State.TRIPS) {
+				if (tripsPanel == null) {
+					tripsPanel = new TripsPanel();
+				}
+				((TripsPanel)tripsPanel).listTrips();
+				return tripsPanel;
+			} else {
+				return null;
+			}
 		}
 	}
 
@@ -89,4 +106,5 @@ public class Planner implements EntryPoint {
 	public static void hideActivityIndicator () {
 		ai.hide();
 	}
+
 }

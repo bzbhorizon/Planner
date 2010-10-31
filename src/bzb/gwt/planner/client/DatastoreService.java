@@ -1,6 +1,9 @@
 package bzb.gwt.planner.client;
 
 
+import java.util.List;
+
+import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.data.CUser;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -13,4 +16,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface DatastoreService extends RemoteService {
 	String saveUser(CUser user);
 	CUser checkUser(String userAuth);
+	
+	Long saveTrip(CTrip trip);
+	List<CTrip> getTripsFor(String encodedUsername);
 }
