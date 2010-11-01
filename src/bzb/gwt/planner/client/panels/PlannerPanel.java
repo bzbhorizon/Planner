@@ -14,7 +14,7 @@ public abstract class PlannerPanel extends FlowPanel implements IPlannerPanel {
 	protected HorizontalPanel getHQNav () {
 		HorizontalPanel hp = new HorizontalPanel();
 		if (Planner.getUser() != null) {
-			hp.add(getNavButton(State.HQ, Planner.getUser().getUsername()));
+			hp.add(getNavButton(State.HQ, Planner.getUser().getFullName()));
 		} else {
 			hp.add(getNavButton(State.WELCOME, "Welcome"));
 		}
@@ -29,6 +29,10 @@ public abstract class PlannerPanel extends FlowPanel implements IPlannerPanel {
 			}
 		});
 		return button;
+	}
+	
+	protected void addNavButton (Button navButton) {
+		Planner.getNav().add(navButton);
 	}
 
 }

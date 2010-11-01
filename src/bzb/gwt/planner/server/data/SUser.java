@@ -36,6 +36,9 @@ public class SUser {
 	@Persistent
 	private int age;
 	
+	@Persistent
+	private long creationTime = System.currentTimeMillis();
+	
 	public SUser () {
 		
 	}
@@ -127,7 +130,16 @@ public class SUser {
 		user.setMale(getMale());
 		user.setUserAuth(getUserAuth());
 		user.setUsername(getUsername());
+		user.setCreationTime(getCreationTime());
 		return user;
+	}
+
+	public void setCreationTime(long creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public long getCreationTime() {
+		return creationTime;
 	}
 
 }

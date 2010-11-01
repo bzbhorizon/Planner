@@ -11,6 +11,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.ClosingEvent;
 import com.google.gwt.user.client.Window.ClosingHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class Planner implements EntryPoint {
@@ -23,6 +25,9 @@ public class Planner implements EntryPoint {
 	
 	private static CUser user;
 	
+	private static FlowPanel body;
+	private static HorizontalPanel nav;
+	
 	private static PlannerPanel loginPanel;
 	private static PlannerPanel hqPanel;
 	private static PlannerPanel tripsPanel;
@@ -34,6 +39,12 @@ public class Planner implements EntryPoint {
 		calendar.setDate(new Date()); //calendar date, not required
 		calendar.setDays(7); //number of days displayed at a time, not required*/
 		
+		body = new FlowPanel();
+		RootPanel.get("bodyContainer").add(body);
+		
+		setNav(new HorizontalPanel());
+		RootPanel.get("headContainer").add(getNav());
+		
 		ai = new ActivityIndicator();
 		updateContent();
 	}
@@ -44,13 +55,11 @@ public class Planner implements EntryPoint {
 	}
 	
 	public static void updateContent () {
-		PlannerPanel body = getBodyPanel();
+		body.clear();
+		body.add(getBodyPanel());
 		
-		RootPanel.get("bodyContainer").clear();
-		RootPanel.get("bodyContainer").add(body);
-		
-		RootPanel.get("headContainer").clear();
-		RootPanel.get("headContainer").add(body.getNav());
+		getNav().clear();
+		getNav().add(((PlannerPanel)body.getWidget(0)).getNav());
 	}
 	
 	private static PlannerPanel getBodyPanel() {
@@ -105,6 +114,14 @@ public class Planner implements EntryPoint {
 	
 	public static void hideActivityIndicator () {
 		ai.hide();
+	}
+
+	public static void setNav(HorizontalPanel nav) {
+		Planner.nav = nav;
+	}
+
+	public static HorizontalPanel getNav() {
+		return nav;
 	}
 
 }

@@ -2,6 +2,7 @@ package bzb.gwt.planner.client.panels;
 
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
+import bzb.gwt.planner.client.Utility;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -13,6 +14,9 @@ public class HQPanel extends PlannerPanel implements IPlannerPanel {
 
 	public HQPanel () {
 		add(new HTML("Welcome " + Planner.getUser().getFullName()));
+		add(new HTML("Registered since " + Utility.formatDateTime(Planner.getUser().getCreationTime())));
+		
+		add(new HTML("*** List invitations"));
 		
 		Button done = new Button();
 	    done.setText("Show trips");

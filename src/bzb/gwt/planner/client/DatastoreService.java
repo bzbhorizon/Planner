@@ -18,5 +18,6 @@ public interface DatastoreService extends RemoteService {
 	CUser checkUser(String userAuth);
 	
 	Long saveTrip(CTrip trip);
+	String deleteTrip(long tripId);
 	List<CTrip> getTripsFor(String encodedUsername);
 }

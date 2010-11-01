@@ -1,8 +1,6 @@
 package bzb.gwt.planner.client.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import bzb.gwt.planner.client.DatastoreService;
 import bzb.gwt.planner.client.DatastoreServiceAsync;
@@ -22,10 +20,10 @@ public class CUser implements Serializable {
 	private String homeCountry;
 	private boolean male;
 	private int age;
-	//private List<CTrip> trips;
+	private long creationTime;
 
 	public CUser() {
-		//trips = new ArrayList<CTrip>();
+
 	}
 	
 	public void save() {
@@ -101,12 +99,12 @@ public class CUser implements Serializable {
 		return encodedUsername;
 	}
 
-	/*public void setTrips(List<CTrip> trips) {
-		this.trips = trips;
+	public void setCreationTime(long creationTime) {
+		this.creationTime = creationTime;
 	}
 
-	public List<CTrip> getTrips() {
-		return trips;
-	}*/
+	public long getCreationTime() {
+		return creationTime;
+	}
 
 }

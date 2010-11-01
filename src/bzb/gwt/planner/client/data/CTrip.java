@@ -15,6 +15,7 @@ public class CTrip implements Serializable {
 	private long tripId;
     private String encodedUsername;
 	private String name;
+	private long creationTime;
 	
 	public CTrip () {}
 	
@@ -23,9 +24,10 @@ public class CTrip implements Serializable {
 		setEncodedUsername(encodedUsername);
 	}
 	
-	public CTrip (String name, String encodedUsername, long tripId) {
+	public CTrip (String name, String encodedUsername, long tripId, long creationTime) {
 		this(name, encodedUsername);
 		setTripId(tripId);
+		setCreationTime(creationTime);
 	}
 
 	public void setName(String name) {
@@ -64,6 +66,31 @@ public class CTrip implements Serializable {
 
 			public void onSuccess(Long tripId) {
 				setTripId(tripId);
+				Planner.updateContent();
+				Planner.hideActivityIndicator();
+			}
+		});
+	}
+
+	public void setCreationTime(long creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public long getCreationTime() {
+		return creationTime;
+	}
+	
+	public void delete() {
+		Planner.showActivityIndicator();
+		((DatastoreServiceAsync)GWT.create(DatastoreService.class)).deleteTrip(this.getTripId(), new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				// Show the RPC error message to the user
+				caught.printStackTrace();
+				System.out.println("Remote Procedure Call - Failure");
+				Planner.hideActivityIndicator();
+			}
+
+			public void onSuccess(String result) {
 				Planner.updateContent();
 				Planner.hideActivityIndicator();
 			}

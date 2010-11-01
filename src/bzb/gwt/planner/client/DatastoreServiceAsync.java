@@ -16,5 +16,6 @@ public interface DatastoreServiceAsync {
 	void checkUser(String userAuth, AsyncCallback<CUser> callback);
 	
 	void saveTrip(CTrip trip, AsyncCallback<Long> callback);
+	void deleteTrip (long tripId, AsyncCallback<String> callback);
 	void getTripsFor(String encodedUsername, AsyncCallback<List<CTrip>> callback);
 }

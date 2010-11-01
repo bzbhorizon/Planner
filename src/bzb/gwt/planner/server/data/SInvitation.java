@@ -6,53 +6,40 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import bzb.gwt.planner.client.data.CTrip;
-
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class STrip {
+public class SInvitation {
 	
 	@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key tripId;
+    private Key connectionId;
 	
 	@Persistent
 	private String encodedUsername;
 	
 	@Persistent
-	private String name;
+	private Key tripId;
 	
 	@Persistent
 	private long creationTime = System.currentTimeMillis();
 	
-	public STrip () {
+	@Persistent
+	private boolean confirmed = false;
+	
+	@Persistent
+	private long confirmationTime;
+	
+	public SInvitation () {
 		
 	}
-	
-	public STrip (CTrip trip) {
-		setEncodedUsername(trip.getEncodedUsername());
-		setName(trip.getName());
+
+	public void setConnectionId(Key connectionId) {
+		this.connectionId = connectionId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setTripId(Key tripId) {
-		this.tripId = tripId;
-	}
-
-	public Key getTripId() {
-		return tripId;
-	}
-	
-	public CTrip getCTrip () {
-		return new CTrip(getName(), getEncodedUsername(), getTripId().getId(), getCreationTime());
+	public Key getConnectionId() {
+		return connectionId;
 	}
 
 	public void setEncodedUsername(String encodedUsername) {
@@ -72,12 +59,36 @@ public class STrip {
         }
 	}
 
+	public void setTripId(Key tripId) {
+		this.tripId = tripId;
+	}
+
+	public Key getTripId() {
+		return tripId;
+	}
+
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
+	}
+
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+
 	public void setCreationTime(long creationTime) {
 		this.creationTime = creationTime;
 	}
 
 	public long getCreationTime() {
 		return creationTime;
+	}
+
+	public void setConfirmationTime(long confirmationTime) {
+		this.confirmationTime = confirmationTime;
+	}
+
+	public long getConfirmationTime() {
+		return confirmationTime;
 	}
 
 }

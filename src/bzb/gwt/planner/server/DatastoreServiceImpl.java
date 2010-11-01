@@ -13,6 +13,7 @@ import bzb.gwt.planner.server.data.PMF;
 import bzb.gwt.planner.server.data.STrip;
 import bzb.gwt.planner.server.data.SUser;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -64,5 +65,21 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
             pm.close();
         }
         return trips;
+	}
+
+	@Override
+	public String deleteTrip(long tripId) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+        	Key key = KeyFactory.createKey(STrip.class.getSimpleName(), tripId);
+        	try {
+        		pm.deletePersistent(pm.getObjectById(STrip.class, key));
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        } finally {
+            pm.close();
+        }
+		return null;
 	}
 }
