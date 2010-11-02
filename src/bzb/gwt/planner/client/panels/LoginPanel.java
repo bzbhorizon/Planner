@@ -2,21 +2,12 @@ package bzb.gwt.planner.client.panels;
 
 import java.util.Date;
 
-import bzb.gwt.planner.client.DatastoreService;
-import bzb.gwt.planner.client.DatastoreServiceAsync;
-import bzb.gwt.planner.client.OpenIdService;
-import bzb.gwt.planner.client.OpenIdServiceAsync;
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.data.CUser;
-import bzb.gwt.planner.server.OpenIdServiceImpl;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,14 +18,15 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.reveregroup.gwt.facebook4gwt.Facebook;
+import com.reveregroup.gwt.facebook4gwt.LoginButton;
+import com.reveregroup.gwt.facebook4gwt.events.FacebookLoginEvent;
+import com.reveregroup.gwt.facebook4gwt.events.FacebookLoginHandler;
+import com.reveregroup.gwt.facebook4gwt.user.FacebookUser;
+import com.reveregroup.gwt.facebook4gwt.user.UserField;
 
 public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 
-	/**
-	 * Create a remote service proxy to talk to the server-side Greeting
-	 * service.
-	 */
-	
 	private static final int AGEBOX_YEAR_ZERO = 1900;
 	private static final int AVERAGE_AGE = 27;
 	private static final int THIS_YEAR = Integer.parseInt(DateTimeFormat.getFormat("y").format(new Date()));
@@ -407,34 +399,11 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 		} else if (Planner.getUser() != null) {
 			Planner.updateContent(State.HQ);
 		} else {
-			final Button sendButton = new Button("Log in");
-			add(sendButton);
-
-			// Create a handler for the sendButton and nameField
-			class MyHandler implements ClickHandler, KeyUpHandler {
-				/**
-				 * Fired when the user clicks on the sendButton.
-				 */
+			final Button googleButton = new Button("Log in with Google");
+			googleButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					getOpenIdEndpoint();
-				}
-
-				/**
-				 * Fired when the user types in the nameField.
-				 */
-				public void onKeyUp(KeyUpEvent event) {
-					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-						getOpenIdEndpoint();
-					}
-				}
-
-				/**
-				 * Send the name from the nameField to the server and wait for a
-				 * response.
-				 */
-				private void getOpenIdEndpoint() {
 					Planner.showActivityIndicator();
-					sendButton.setEnabled(false);
+					googleButton.setEnabled(false);
 					Planner.openidService.getOpenIdEndpoint(
 							new AsyncCallback<String>() {
 								public void onFailure(Throwable caught) {
@@ -451,10 +420,38 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 								}
 							});
 				}
-			}
-			// Add a handler to send the name to the server
-			MyHandler handler = new MyHandler();
-			sendButton.addClickHandler(handler);
+			});
+			add(googleButton);
+			
+			Facebook.init("bf8875116b31a0b47a3432224f2f14b8");
+			
+			final LoginButton fbButton = new LoginButton(true);		
+			Facebook.addLoginHandler(new FacebookLoginHandler() {
+                public void loginStatusChanged(FacebookLoginEvent event) {
+                    if (event.isLoggedIn()) {
+                    	Planner.showActivityIndicator();
+                    	Facebook.APIClient().users_getLoggedInUser(new AsyncCallback<FacebookUser>() {
+                                public void onSuccess(FacebookUser result) {
+                                	//Planner.getUser().setAge(result.getBirthday());
+                                	Planner.getUser().setFullName(result.getFirstName() + " " + result.getLastName());
+                                    Planner.getUser().setHomeCountry(result.getCurrentLocation().getCountry());
+                                    //Planner.getUser().setMale(result.getSex());
+                                    Planner.getUser().setUsername(result.getProxiedEmail());
+                                    Planner.showActivityIndicator();
+                                    Planner.getUser().save();
+									Planner.updateContent(State.TRIPS);
+                                }
+
+                                public void onFailure(Throwable caught) {
+                                	Planner.showActivityIndicator();
+                                }
+                        }, UserField.FIRST_NAME, UserField.LAST_NAME, UserField.BIRTHDAY, UserField.CURRENT_LOCATION, UserField.SEX, UserField.PROXIED_EMAIL);
+                    } else {
+                         // ?
+                    }
+                }
+			});
+			add(fbButton);
 		}
 	}
 

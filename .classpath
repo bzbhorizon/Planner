@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="/Users/bzb/Documents/workspace/openid4java-gae-hacks/lib/nekohtml-1.9.7.jar"/>
 	<classpathentry kind="lib" path="/Users/bzb/Documents/workspace/openid4java-gae-hacks/lib/xercesImpl-2.8.1.jar"/>
 	<classpathentry kind="lib" path="/Users/bzb/Documents/workspace/openid4java-gae-hacks/openid4java-0.9.5.593-gaehacks.jar"/>
+	<classpathentry kind="lib" path="/Users/bzb/Documents/workspace/Planner/war/WEB-INF/lib/facebook4gwt-1.1.4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

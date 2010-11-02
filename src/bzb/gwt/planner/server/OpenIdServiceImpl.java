@@ -34,7 +34,8 @@ public class OpenIdServiceImpl extends RemoteServiceServlet implements
 	
 	private static ConsumerManager manager;
 	
-	private static final String RETURN_TO_PATH = "http://127.0.0.1:8888/Planner.html?gwt.codesvr=127.0.0.1:9997&";
+	//private static final String RETURN_TO_PATH = "http://127.0.0.1:8888/Planner.html?gwt.codesvr=127.0.0.1:9997&";
+	private static final String RETURN_TO_PATH = "http://plannertr.appspot.com/?";
 
 	public String getOpenIdEndpoint() {
 		String auth = null;
