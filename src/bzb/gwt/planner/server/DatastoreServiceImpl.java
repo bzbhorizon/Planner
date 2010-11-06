@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 
 import bzb.gwt.planner.client.DatastoreService;
 import bzb.gwt.planner.client.data.CTrip;

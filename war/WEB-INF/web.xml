@@ -7,12 +7,12 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>openIdServlet</servlet-name>
-    <servlet-class>bzb.gwt.planner.server.OpenIdServiceImpl</servlet-class>
+    <servlet-name>signInServlet</servlet-name>
+    <servlet-class>bzb.gwt.planner.server.SignInServiceImpl</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>openIdServlet</servlet-name>
-    <url-pattern>/planner/openid</url-pattern>
+    <servlet-name>signInServlet</servlet-name>
+    <url-pattern>/planner/signin</url-pattern>
   </servlet-mapping>
   
   <servlet>

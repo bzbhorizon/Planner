@@ -26,6 +26,16 @@ public class CUser implements Serializable {
 
 	}
 	
+	public CUser (String username, String userAuth, String fullName, String homeCountry, boolean male, int age, long creationTime) {
+		setUsername(username);
+		setUserAuth(userAuth);
+		setFullName(fullName);
+		setHomeCountry(homeCountry);
+		setMale(male);
+		setAge(age);
+		setCreationTime(creationTime);
+	}
+	
 	public void save() {
 		Planner.showActivityIndicator();
 		((DatastoreServiceAsync)GWT.create(DatastoreService.class)).saveUser(this, new AsyncCallback<String>() {

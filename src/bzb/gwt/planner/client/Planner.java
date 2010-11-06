@@ -20,7 +20,7 @@ public class Planner implements EntryPoint {
 	public static enum State {WELCOME, HQ, TRIPS, LOCATIONS, PLANNING};
 	private static State state = State.WELCOME;
 	
-	public static final OpenIdServiceAsync openidService = GWT.create(OpenIdService.class);
+	public static final SignInServiceAsync signinService = GWT.create(SignInService.class);
 	public static final DatastoreServiceAsync saveService = GWT.create(DatastoreService.class);
 	
 	private static CUser user;
