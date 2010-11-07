@@ -7,6 +7,7 @@ public class ActivityIndicator extends DialogBox {
 
 	public ActivityIndicator () {
 		setText("Loading ...");
+		setGlassEnabled(true);
 		setWidget(new Image("activityIndicator.gif"));
 	}
 	

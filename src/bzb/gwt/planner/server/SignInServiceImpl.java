@@ -31,6 +31,7 @@ import org.openid4java.message.ax.FetchResponse;
 
 import bzb.gwt.planner.client.SignInService;
 import bzb.gwt.planner.client.data.CUser;
+import bzb.gwt.planner.shared.data.Paths;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -44,9 +45,6 @@ public class SignInServiceImpl extends RemoteServiceServlet implements
 	private static ConsumerManager manager;
 	
 	private static final Logger log = Logger.getLogger(SignInServiceImpl.class.getName());
-	
-	//private static final String RETURN_TO_PATH = "http://127.0.0.1:8888/Planner.html?gwt.codesvr=127.0.0.1:9997&";
-	private static final String RETURN_TO_PATH = "http://plannertr.appspot.com/";
 
 	public String getOpenIdEndpoint() {
 		String auth = null;
@@ -66,7 +64,7 @@ public class SignInServiceImpl extends RemoteServiceServlet implements
 					session.setAttribute("openid-disc", discovered);
 					
 					// obtain a AuthRequest message to be sent to the OpenID provider
-		            AuthRequest authReq = manager.authenticate(discovered, RETURN_TO_PATH + "?state=gauth");
+		            AuthRequest authReq = manager.authenticate(discovered, Paths.RETURN_TO_PATH + "state=gauth");
 
 		            // Attribute Exchange example: fetching the 'email' attribute
 		            FetchRequest fetch = FetchRequest.createFetchRequest();
@@ -160,7 +158,7 @@ public class SignInServiceImpl extends RemoteServiceServlet implements
 		try {
 			String response = Utility.makeGetRequest("https://graph.facebook.com/oauth/access_token?" + 
 				"client_id=" + clientId + "&" +
-				    "redirect_uri=" + RETURN_TO_PATH + "&" +
+				    "redirect_uri=" + Paths.RETURN_TO_PATH + "&" +
 				    "client_secret=" + secret + "&" +
 				    "code=" + URLEncoder.encode(authCode, "UTF-8"));
 			String token = response.substring(0, response.indexOf('&'));

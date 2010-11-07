@@ -5,6 +5,7 @@ import java.util.Date;
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.data.CUser;
+import bzb.gwt.planner.shared.data.Paths;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -24,9 +25,6 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 	private static final int AGEBOX_YEAR_ZERO = 1900;
 	private static final int AVERAGE_AGE = 27;
 	private static final int THIS_YEAR = Integer.parseInt(DateTimeFormat.getFormat("y").format(new Date()));
-	
-	//private static final String RETURN_TO_PATH = "http://127.0.0.1:8888/Planner.html?gwt.codesvr=127.0.0.1:9997&";
-	private static final String RETURN_TO_PATH = "http://plannertr.appspot.com/";
 
 	private class UserCallback implements AsyncCallback<CUser> {
 		public void onFailure(Throwable caught) {
@@ -42,7 +40,7 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 			
 			final VerticalPanel vp = new VerticalPanel();
 	
-			Planner.saveService.checkUser(Planner.getUser().getUserAuth(), new AsyncCallback<CUser>() {
+			Planner.datastoreService.checkUserByAuth(Planner.getUser().getUserAuth(), new AsyncCallback<CUser>() {
 				public void onFailure(Throwable caught) {
 					// Show the RPC error message to the user
 					caught.printStackTrace();
@@ -429,7 +427,7 @@ public class LoginPanel extends PlannerPanel implements IPlannerPanel {
 			final Button facebook = new Button("Log in with Facebook");		
 			facebook.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					Window.Location.assign("https://graph.facebook.com/oauth/authorize?client_id=bf8875116b31a0b47a3432224f2f14b8&redirect_uri=" + RETURN_TO_PATH + "&scope=user_birthday,email&state=fbauth");
+					Window.Location.assign("https://graph.facebook.com/oauth/authorize?client_id=bf8875116b31a0b47a3432224f2f14b8&redirect_uri=" + Paths.RETURN_TO_PATH + "&scope=user_birthday,email&state=fbauth");
 				}
 			});
 			add(facebook);

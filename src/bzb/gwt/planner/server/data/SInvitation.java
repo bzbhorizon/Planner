@@ -6,7 +6,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import bzb.gwt.planner.client.data.CInvitation;
+
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @PersistenceCapable
 public class SInvitation {
@@ -32,6 +35,21 @@ public class SInvitation {
 	
 	public SInvitation () {
 		
+	}
+	
+	public SInvitation(CInvitation invitation) {
+		setConfirmationTime(invitation.getConfirmationTime());
+		setConfirmed(invitation.isConfirmed());
+		setEncodedUsername(invitation.getEncodedUsername());
+		setTripId(KeyFactory.createKey(STrip.class.getSimpleName(), invitation.getTripId()));
+	}
+	
+	public CInvitation getCInvitation () {
+		CInvitation invitation = new CInvitation(getEncodedUsername(), getTripId().getId());
+		invitation.setConfirmationTime(getConfirmationTime());
+		invitation.setConfirmed(isConfirmed());
+		invitation.setConnectionId(getConnectionId().getId());
+		return invitation;
 	}
 
 	public void setConnectionId(Key connectionId) {

@@ -6,9 +6,11 @@ import java.util.List;
 import javax.jdo.PersistenceManager;
 
 import bzb.gwt.planner.client.DatastoreService;
+import bzb.gwt.planner.client.data.CInvitation;
 import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.data.CUser;
 import bzb.gwt.planner.server.data.PMF;
+import bzb.gwt.planner.server.data.SInvitation;
 import bzb.gwt.planner.server.data.STrip;
 import bzb.gwt.planner.server.data.SUser;
 
@@ -29,7 +31,7 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
 		return suser.getEncodedUsername();
 	}
 	
-	public CUser checkUser (String userAuth) {
+	public CUser checkUserByAuth (String userAuth) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
         String encodedKey = null;
 		try {
@@ -43,6 +45,34 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
         } finally {
             pm.close();
         }
+	}
+	
+	public List<CUser> checkUserByName (String name) {
+		List<CUser> users;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			List<SUser> results = (List<SUser>) pm.newQuery(SUser.class, "fullName == '" + name + "'").execute();
+			users = new ArrayList<CUser>();
+			for (SUser user : results) {
+				users.add(user.getCUser());
+			}
+        } finally {
+            pm.close();
+        }
+        return users;
+	}
+	
+	public CUser checkUserByUsername (String username) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			List<SUser> results = (List<SUser>) pm.newQuery(SUser.class, "username == '" + username + "'").execute();
+			for (SUser user : results) {
+				return user.getCUser();
+			}
+        } finally {
+            pm.close();
+        }
+        return null;
 	}
 
 	public Long saveTrip(CTrip trip) {
@@ -66,7 +96,6 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
         return trips;
 	}
 
-	@Override
 	public String deleteTrip(long tripId) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
@@ -80,5 +109,63 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
             pm.close();
         }
 		return null;
+	}
+
+	public List<CUser> getInviteesFor(long tripId) {
+		List<CUser> invitees;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			List<SInvitation> results = (List<SInvitation>) pm.newQuery(SInvitation.class).execute();
+			
+			invitees = new ArrayList<CUser>();
+			for (SInvitation invitation : results) {
+				if (invitation.getTripId().getId() == tripId) {
+		        	try {
+		        		SUser user = pm.getObjectById(SUser.class, invitation.getEncodedUsername());
+		        		invitees.add(user.getCUser());
+		        	} catch (Exception e) {
+		           		e.printStackTrace();
+		        	}
+				}
+			}
+        } finally {
+            pm.close();
+        }
+        return invitees;
+	}
+
+	public Long sendInvitation(CInvitation invitation) {
+		SInvitation s = new SInvitation(invitation);
+		s.save();
+		return s.getConnectionId().getId();
+	}
+
+	public List<CInvitation> getInvitationsFor(String encodedUsername, boolean openOnly) {
+		List<CInvitation> invitations;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			List<SInvitation> results = (List<SInvitation>) pm.newQuery(SInvitation.class, "encodedUsername == '" + encodedUsername + "'").execute();
+			invitations = new ArrayList<CInvitation>();
+			for (SInvitation invitation : results) {
+				if (openOnly && !invitation.isConfirmed()) {
+					invitations.add(invitation.getCInvitation());
+				}
+			}
+        } finally {
+            pm.close();
+        }
+        return invitations;
+	}
+
+	public String acceptInvitation(long connectionId) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+	    SInvitation s;
+		try {
+	        s = pm.getObjectById(SInvitation.class, KeyFactory.createKey(SInvitation.class.getSimpleName(), connectionId));
+	        s.setConfirmed(true);
+	    } finally {
+	        pm.close();
+	    }
+		return s.getEncodedUsername();
 	}
 }

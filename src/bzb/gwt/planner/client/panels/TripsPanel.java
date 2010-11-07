@@ -6,7 +6,9 @@ import java.util.List;
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.Utility;
+import bzb.gwt.planner.client.data.CInvitation;
 import bzb.gwt.planner.client.data.CTrip;
+import bzb.gwt.planner.client.data.CUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,6 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,15 +24,17 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 	
 	private List<CTrip> trips;
+	private CTrip trip;
 	
 	private static DeleteDialog dd;
+	private static InviteDialog id;
 	
 	public void listTrips () {
 		clear();
 		
 		Planner.showActivityIndicator();
 		trips = new ArrayList<CTrip>();
-		Planner.saveService.getTripsFor(Planner.getUser().getEncodedUsername(),
+		Planner.datastoreService.getTripsFor(Planner.getUser().getEncodedUsername(),
 				new AsyncCallback<List<CTrip>>() {
 					public void onFailure(Throwable caught) {
 						// Show the RPC error message to the user
@@ -71,6 +76,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 								Button tripButton = new Button(trip.getName());
 								tripButton.addClickHandler(new ClickHandler() {
 									public void onClick(ClickEvent event) {
+										addNavButton(new Button(trip.getName()));
 										describeTrip(trip);	
 									}
 								});
@@ -86,9 +92,11 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 	}
 	
 	private void describeTrip (final CTrip trip) {
-		clear();
+		this.trip = trip;
 		
-		addNavButton(new Button(trip.getName()));
+		Planner.setState(State.TRIP);
+		
+		clear();
 		
 		add(new HTML("Trip: " + trip.getName()));
 		add(new HTML("Started planning at " + Utility.formatDateTime(trip.getCreationTime())));
@@ -101,15 +109,49 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		});
 		add(delete);
 		
+		Button edit = new Button("Edit trip");
+		edit.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				Planner.setTrip(trip);
+				Planner.updateContent(State.PLANNING);
+			}
+		});
+		add(edit);
+		
+		add(new HTML("Travellers on trip:"));
+		
+		final VerticalPanel inviteesPanel = new VerticalPanel();
+		
+		Planner.showActivityIndicator();
+		Planner.datastoreService.getInviteesFor(trip.getTripId(),
+				new AsyncCallback<List<CUser>>() {
+					public void onFailure(Throwable caught) {
+						// Show the RPC error message to the user
+						caught.printStackTrace();
+						System.out
+								.println("Remote Procedure Call - Failure");
+						Planner.hideActivityIndicator();
+					}
+
+					public void onSuccess(List<CUser> results) {
+						if (results != null) {
+							for (CUser user : results) {
+								final Button userButton = new Button(user.getFullName() + " confirmed/unconfirmed?");
+								inviteesPanel.add(userButton);
+							}
+						}
+						Planner.hideActivityIndicator();
+					}
+				});
+		add(inviteesPanel);
+		
 		Button invite = new Button("Invite another traveller");
 		invite.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				// lookup invitee
-					// if registered, say, if not, say
+				id = new InviteDialog();
 			}
 		});
 		add(invite);
-		add(new HTML("*** List invitees"));
 	}
 
 	public HorizontalPanel getNav() {
@@ -123,6 +165,8 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		
 		public DeleteDialog (CTrip trip) {
 			setTrip(trip);
+			
+			setGlassEnabled(true);
 			
 			setText("Confirm delete");
 			
@@ -159,6 +203,135 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 
 		public CTrip getTrip() {
 			return trip;
+		}
+	}
+	
+	private class InviteDialog extends DialogBox {
+		
+		public InviteDialog () {
+			setText("Invitation");
+			
+			setGlassEnabled(true);
+			
+			VerticalPanel vp = new VerticalPanel();
+			
+			final VerticalPanel inviteesPanel = new VerticalPanel();
+			
+			HorizontalPanel hp = new HorizontalPanel();
+			hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			hp.add(new HTML("Name or email address:"));
+			final TextBox nameBox = new TextBox();
+			hp.add(nameBox);
+			final Button search = new Button("Search");
+			search.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					inviteesPanel.clear();
+					
+					Planner.showActivityIndicator();
+					Planner.datastoreService.checkUserByName(nameBox.getText(), 
+							new AsyncCallback<List<CUser>>() {
+								public void onFailure(Throwable caught) {
+									// Show the RPC error message to the user
+									caught.printStackTrace();
+									System.out
+											.println("Remote Procedure Call - Failure");
+									Planner.hideActivityIndicator();
+								}
+
+								public void onSuccess(List<CUser> results) {
+									if (results != null) {
+										for (final CUser user : results) {
+											final Button userButton = new Button(user.getFullName());
+											userButton.addClickHandler(new ClickHandler() {
+												public void onClick(ClickEvent event) {
+													Planner.showActivityIndicator();
+													CInvitation invitation = new CInvitation(user.getEncodedUsername(), trip.getTripId());
+													Planner.datastoreService.sendInvitation(invitation, new AsyncCallback<Long>() {
+														public void onFailure(
+																Throwable caught) {
+															// Show the RPC error message to the user
+															caught.printStackTrace();
+															System.out
+																	.println("Remote Procedure Call - Failure");
+															Planner.hideActivityIndicator();
+														}
+
+														public void onSuccess(
+																Long result) {
+															hide();
+															Planner.hideActivityIndicator();
+															describeTrip(trip);
+														}
+													});
+												}
+											});
+											inviteesPanel.add(userButton);
+										}
+									}
+									Planner.hideActivityIndicator();
+								}
+							});
+					
+					Planner.showActivityIndicator();
+					Planner.datastoreService.checkUserByUsername(nameBox.getText(), 
+							new AsyncCallback<CUser>() {
+								public void onFailure(Throwable caught) {
+									// Show the RPC error message to the user
+									caught.printStackTrace();
+									System.out
+											.println("Remote Procedure Call - Failure");
+									Planner.hideActivityIndicator();
+								}
+
+								public void onSuccess(final CUser result) {
+									if (result != null) {
+										final Button userButton = new Button(result.getFullName());
+										userButton.addClickHandler(new ClickHandler() {
+											public void onClick(ClickEvent event) {
+												Planner.showActivityIndicator();
+												CInvitation invitation = new CInvitation(result.getEncodedUsername(), trip.getTripId());
+												Planner.datastoreService.sendInvitation(invitation, new AsyncCallback<Long>() {
+													public void onFailure(
+															Throwable caught) {
+														// Show the RPC error message to the user
+														caught.printStackTrace();
+														System.out
+																.println("Remote Procedure Call - Failure");
+														Planner.hideActivityIndicator();
+													}
+
+													public void onSuccess(
+															Long result) {
+														hide();
+														Planner.hideActivityIndicator();
+														describeTrip(trip);
+													}
+												});
+											}
+										});
+										inviteesPanel.add(userButton);
+									}
+									Planner.hideActivityIndicator();
+								}
+							});
+				}
+			});
+			hp.add(search);
+			
+			vp.add(hp);
+			vp.add(inviteesPanel);
+			
+			final Button cancel = new Button("Cancel");
+			cancel.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					hide();
+				}
+			});
+			vp.add(cancel);
+			
+			setWidget(vp);
+			
+			center();
 		}
 	}
 	

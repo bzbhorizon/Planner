@@ -3,7 +3,7 @@
 	height: auto;
 	font-family: helvetica, arial;
 	margin: 0px;
-	padding: 0px;
+	padding: 10px;
 }
 
 #pageContainer {
@@ -15,7 +15,8 @@
 	margin: 30px 10px 0px 10px;
 	padding: 0px;
 	color: white;
-	font-size: 40pt;
+	font-size: 60pt;
+	letter-spacing: -5pt;
 }
 
 #headContainer, #footContainer {
@@ -33,4 +34,19 @@
 
 .incomplete {
 	border: 2px solid red;
+}
+
+.gwt-Button {
+	border: none !important;
+	border-bottom: 5px solid white !important;
+	margin: 2px !important;
+	background: rgba(255, 255, 255, 0.5) !important;
+	padding: 10px !important;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 6pt;
+	}
+
+.gwt-Button-hover {
+	border: 1px solid red !important;
 }

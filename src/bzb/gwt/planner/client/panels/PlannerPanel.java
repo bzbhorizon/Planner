@@ -31,7 +31,7 @@ public abstract class PlannerPanel extends FlowPanel implements IPlannerPanel {
 		return button;
 	}
 	
-	protected void addNavButton (Button navButton) {
+	public void addNavButton (Button navButton) {
 		Planner.getNav().add(navButton);
 	}
 
