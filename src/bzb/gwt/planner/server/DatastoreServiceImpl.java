@@ -7,8 +7,10 @@ import javax.jdo.PersistenceManager;
 
 import bzb.gwt.planner.client.DatastoreService;
 import bzb.gwt.planner.client.data.CInvitation;
+import bzb.gwt.planner.client.data.CInviteeInfo;
 import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.data.CUser;
+import bzb.gwt.planner.client.data.CInvitationInfo;
 import bzb.gwt.planner.server.data.PMF;
 import bzb.gwt.planner.server.data.SInvitation;
 import bzb.gwt.planner.server.data.STrip;
@@ -111,18 +113,18 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
-	public List<CUser> getInviteesFor(long tripId) {
-		List<CUser> invitees;
+	public List<CInviteeInfo> getInviteesFor(long tripId) {
+		List<CInviteeInfo> invitees;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			List<SInvitation> results = (List<SInvitation>) pm.newQuery(SInvitation.class).execute();
 			
-			invitees = new ArrayList<CUser>();
+			invitees = new ArrayList<CInviteeInfo>();
 			for (SInvitation invitation : results) {
 				if (invitation.getTripId().getId() == tripId) {
 		        	try {
 		        		SUser user = pm.getObjectById(SUser.class, invitation.getEncodedUsername());
-		        		invitees.add(user.getCUser());
+		        		invitees.add(new CInviteeInfo(invitation.getCInvitation(), user.getCUser()));
 		        	} catch (Exception e) {
 		           		e.printStackTrace();
 		        	}
@@ -140,15 +142,17 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
 		return s.getConnectionId().getId();
 	}
 
-	public List<CInvitation> getInvitationsFor(String encodedUsername, boolean openOnly) {
-		List<CInvitation> invitations;
+	public List<CInvitationInfo> getInvitationsFor(String encodedUsername, boolean openOnly) {
+		List<CInvitationInfo> invitations;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			List<SInvitation> results = (List<SInvitation>) pm.newQuery(SInvitation.class, "encodedUsername == '" + encodedUsername + "'").execute();
-			invitations = new ArrayList<CInvitation>();
+			invitations = new ArrayList<CInvitationInfo>();
 			for (SInvitation invitation : results) {
 				if (openOnly && !invitation.isConfirmed()) {
-					invitations.add(invitation.getCInvitation());
+					STrip trip = pm.getObjectById(STrip.class, invitation.getTripId());
+					SUser user = pm.getObjectById(SUser.class, invitation.getEncodedUsername());
+					invitations.add(new CInvitationInfo(invitation.getCInvitation(), trip.getCTrip(), user.getCUser()));
 				}
 			}
         } finally {
@@ -163,9 +167,36 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
 		try {
 	        s = pm.getObjectById(SInvitation.class, KeyFactory.createKey(SInvitation.class.getSimpleName(), connectionId));
 	        s.setConfirmed(true);
+	        s.setConfirmationTime(System.currentTimeMillis());
 	    } finally {
 	        pm.close();
 	    }
 		return s.getEncodedUsername();
+	}
+
+	public CTrip checkTrip(long tripId) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+	    STrip s;
+		try {
+	        s = pm.getObjectById(STrip.class, KeyFactory.createKey(STrip.class.getSimpleName(), tripId));
+	    } finally {
+	        pm.close();
+	    }
+		return s.getCTrip();
+	}
+
+	public String deleteInvitation(long connectionId) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+        	Key key = KeyFactory.createKey(SInvitation.class.getSimpleName(), connectionId);
+        	try {
+        		pm.deletePersistent(pm.getObjectById(SInvitation.class, key));
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        } finally {
+            pm.close();
+        }
+		return null;
 	}
 }

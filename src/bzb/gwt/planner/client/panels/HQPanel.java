@@ -5,7 +5,7 @@ import java.util.List;
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.Utility;
-import bzb.gwt.planner.client.data.CInvitation;
+import bzb.gwt.planner.client.data.CInvitationInfo;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,14 +25,15 @@ public class HQPanel extends PlannerPanel implements IPlannerPanel {
 	}
 	
 	private void updateContent() {
+		clear();
+		
 		add(new HTML("Welcome " + Planner.getUser().getFullName()));
 		add(new HTML("Registered since " + Utility.formatDateTime(Planner.getUser().getCreationTime())));
 		
-		add(new HTML("*** List open invitations"));
 		final VerticalPanel invitePanel = new VerticalPanel();
 		Planner.showActivityIndicator();
 		Planner.datastoreService.getInvitationsFor(Planner.getUser().getEncodedUsername(), true,
-				new AsyncCallback<List<CInvitation>>() {
+				new AsyncCallback<List<CInvitationInfo>>() {
 					public void onFailure(Throwable caught) {
 						// Show the RPC error message to the user
 						caught.printStackTrace();
@@ -41,13 +42,13 @@ public class HQPanel extends PlannerPanel implements IPlannerPanel {
 						Planner.hideActivityIndicator();
 					}
 
-					public void onSuccess(List<CInvitation> results) {
+					public void onSuccess(List<CInvitationInfo> results) {
 						if (results != null) {
-							for (final CInvitation invitation : results) {
-								final Button invitationButton = new Button(invitation.getTripId() + " blah");
+							for (final CInvitationInfo invitation : results) {
+								final Button invitationButton = new Button("Invitation sent by " + invitation.getInviter().getFullName() + " for trip \"" + invitation.getTrip().getName() + "\" at " + Utility.formatDateTime(invitation.getInvitation().getCreationTime()));
 								invitationButton.addClickHandler(new ClickHandler() {
 									public void onClick(ClickEvent event) {
-										cd = new ConfirmDialog(invitation.getConnectionId());
+										cd = new ConfirmDialog(invitation);
 									}
 								});
 								invitePanel.add(invitationButton);
@@ -59,7 +60,7 @@ public class HQPanel extends PlannerPanel implements IPlannerPanel {
 		add(invitePanel);
 		
 		Button done = new Button();
-	    done.setText("Show trips");
+	    done.setText("Show my trips");
 	    done.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -72,14 +73,14 @@ public class HQPanel extends PlannerPanel implements IPlannerPanel {
 
 	class ConfirmDialog extends DialogBox {
 		
-		public ConfirmDialog (final long connectionId) {
+		public ConfirmDialog (final CInvitationInfo invitation) {
 			HorizontalPanel hp = new HorizontalPanel();
 			
 			final Button accept = new Button("Accept");
 			accept.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					Planner.showActivityIndicator();
-					Planner.datastoreService.acceptInvitation(connectionId,
+					Planner.datastoreService.acceptInvitation(invitation.getInvitation().getConnectionId(),
 							new AsyncCallback<String>() {
 								public void onFailure(Throwable caught) {
 									// Show the RPC error message to the user

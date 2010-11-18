@@ -1,4 +1,4 @@
-package bzb.gwt.planner.shared.data;
+package bzb.gwt.planner.shared;
 
 public final class Paths {
 	

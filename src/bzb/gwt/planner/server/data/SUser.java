@@ -125,6 +125,7 @@ public class SUser {
 	public CUser getCUser () {
 		CUser user = new CUser();
 		user.setEncodedUsername(getEncodedUsername());
+		user.setAge(getAge());
 		user.setFullName(getFullName());
 		user.setHomeCountry(getHomeCountry());
 		user.setMale(getMale());

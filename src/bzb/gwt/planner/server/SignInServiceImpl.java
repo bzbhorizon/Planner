@@ -31,7 +31,7 @@ import org.openid4java.message.ax.FetchResponse;
 
 import bzb.gwt.planner.client.SignInService;
 import bzb.gwt.planner.client.data.CUser;
-import bzb.gwt.planner.shared.data.Paths;
+import bzb.gwt.planner.shared.Paths;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

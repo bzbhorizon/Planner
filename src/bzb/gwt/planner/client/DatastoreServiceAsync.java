@@ -4,14 +4,13 @@ package bzb.gwt.planner.client;
 import java.util.List;
 
 import bzb.gwt.planner.client.data.CInvitation;
+import bzb.gwt.planner.client.data.CInviteeInfo;
 import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.data.CUser;
+import bzb.gwt.planner.client.data.CInvitationInfo;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-/**
- * The async counterpart of <code>SaveService</code>.
- */
 public interface DatastoreServiceAsync {
 	void saveUser(CUser user, AsyncCallback<String> callback);
 	void checkUserByAuth(String userAuth, AsyncCallback<CUser> callback);
@@ -21,9 +20,11 @@ public interface DatastoreServiceAsync {
 	void saveTrip(CTrip trip, AsyncCallback<Long> callback);
 	void deleteTrip (long tripId, AsyncCallback<String> callback);
 	void getTripsFor(String encodedUsername, AsyncCallback<List<CTrip>> callback);
-	void getInviteesFor(long tripId, AsyncCallback<List<CUser>> callback);
+	void getInviteesFor(long tripId, AsyncCallback<List<CInviteeInfo>> callback);
 	
 	void sendInvitation(CInvitation invitation, AsyncCallback<Long> callback);
-	void getInvitationsFor(String encodedUsername, boolean openOnly, AsyncCallback<List<CInvitation>> callback);
+	void getInvitationsFor(String encodedUsername, boolean openOnly, AsyncCallback<List<CInvitationInfo>> callback);
 	void acceptInvitation(long connectionId, AsyncCallback<String> callback);
+	void checkTrip(long tripId, AsyncCallback<CTrip> callback);
+	void deleteInvitation(long connectionId, AsyncCallback<String> callback);
 }

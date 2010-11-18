@@ -7,7 +7,8 @@ import bzb.gwt.planner.client.panels.LoginPanel;
 import bzb.gwt.planner.client.panels.PlannerPanel;
 import bzb.gwt.planner.client.panels.PlanningPanel;
 import bzb.gwt.planner.client.panels.TripsPanel;
-import bzb.gwt.planner.shared.data.Paths;
+import bzb.gwt.planner.client.panels.UserProfileDialog;
+import bzb.gwt.planner.shared.Paths;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -39,6 +40,7 @@ public class Planner implements EntryPoint {
 	private static PlannerPanel hqPanel;
 	private static PlannerPanel tripsPanel;
 	private static PlannerPanel planningPanel;
+	private static UserProfileDialog upd;
 	
 	private static Button logout;
 	
@@ -176,4 +178,8 @@ public class Planner implements EntryPoint {
 		return trip;
 	}
 
+	public static void showUpdFor(String encodedUsername) {
+		upd = new UserProfileDialog(encodedUsername);
+	}
+	
 }

@@ -5,7 +5,7 @@ import java.util.Date;
 import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.data.CUser;
-import bzb.gwt.planner.shared.data.Paths;
+import bzb.gwt.planner.shared.Paths;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

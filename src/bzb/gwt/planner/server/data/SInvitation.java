@@ -46,6 +46,7 @@ public class SInvitation {
 	
 	public CInvitation getCInvitation () {
 		CInvitation invitation = new CInvitation(getEncodedUsername(), getTripId().getId());
+		invitation.setCreationTime(getCreationTime());
 		invitation.setConfirmationTime(getConfirmationTime());
 		invitation.setConfirmed(isConfirmed());
 		invitation.setConnectionId(getConnectionId().getId());

@@ -7,6 +7,7 @@ import bzb.gwt.planner.client.Planner;
 import bzb.gwt.planner.client.Planner.State;
 import bzb.gwt.planner.client.Utility;
 import bzb.gwt.planner.client.data.CInvitation;
+import bzb.gwt.planner.client.data.CInviteeInfo;
 import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.data.CUser;
 
@@ -124,7 +125,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		
 		Planner.showActivityIndicator();
 		Planner.datastoreService.getInviteesFor(trip.getTripId(),
-				new AsyncCallback<List<CUser>>() {
+				new AsyncCallback<List<CInviteeInfo>>() {
 					public void onFailure(Throwable caught) {
 						// Show the RPC error message to the user
 						caught.printStackTrace();
@@ -133,11 +134,39 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 						Planner.hideActivityIndicator();
 					}
 
-					public void onSuccess(List<CUser> results) {
+					public void onSuccess(List<CInviteeInfo> results) {
 						if (results != null) {
-							for (CUser user : results) {
-								final Button userButton = new Button(user.getFullName() + " confirmed/unconfirmed?");
-								inviteesPanel.add(userButton);
+							for (final CInviteeInfo invitee : results) {
+								HorizontalPanel inviteePanel = new HorizontalPanel();
+								
+								String buttonText = invitee.getInvitee().getFullName() + " ";
+								if (invitee.getInvitation().isConfirmed()) {
+									buttonText += "(accepted invite at " + Utility.formatDateTime(invitee.getInvitation().getConfirmationTime()) + ")";
+								} else {
+									buttonText += "(invitation issed at " + Utility.formatDateTime(invitee.getInvitation().getCreationTime()) + " not yet accepted)";
+								}
+								final Button userButton = new Button(buttonText);
+								inviteePanel.add(userButton);
+								
+								final Button deleteUser = new Button("Cancel invitation");
+								deleteUser.addClickHandler(new ClickHandler() {
+									public void onClick(ClickEvent event) {
+										Planner.datastoreService.deleteInvitation(invitee.getInvitation().getConnectionId(), new AsyncCallback<String>() {
+											public void onFailure(
+													Throwable caught) {
+												caught.printStackTrace();
+												System.out
+														.println("Remote Procedure Call - Failure");
+											}
+											public void onSuccess(String result) {
+												describeTrip(trip);
+											}
+										});
+									}
+								});
+								inviteePanel.add(deleteUser);
+								
+								inviteesPanel.add(inviteePanel);
 							}
 						}
 						Planner.hideActivityIndicator();
@@ -241,31 +270,45 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 								public void onSuccess(List<CUser> results) {
 									if (results != null) {
 										for (final CUser user : results) {
-											final Button userButton = new Button(user.getFullName());
-											userButton.addClickHandler(new ClickHandler() {
-												public void onClick(ClickEvent event) {
-													Planner.showActivityIndicator();
-													CInvitation invitation = new CInvitation(user.getEncodedUsername(), trip.getTripId());
-													Planner.datastoreService.sendInvitation(invitation, new AsyncCallback<Long>() {
-														public void onFailure(
-																Throwable caught) {
-															// Show the RPC error message to the user
-															caught.printStackTrace();
-															System.out
-																	.println("Remote Procedure Call - Failure");
-															Planner.hideActivityIndicator();
-														}
-
-														public void onSuccess(
-																Long result) {
-															hide();
-															Planner.hideActivityIndicator();
-															describeTrip(trip);
-														}
-													});
-												}
-											});
-											inviteesPanel.add(userButton);
+											if (!user.getEncodedUsername().equals(Planner.getUser().getEncodedUsername())) {
+												HorizontalPanel inviteePanel = new HorizontalPanel();
+												
+												final Button profileButton = new Button(user.getFullName());
+												profileButton.addClickHandler(new ClickHandler() {
+													public void onClick(ClickEvent event) {
+														Planner.showUpdFor(user.getUsername());
+													}
+												});
+												inviteePanel.add(profileButton);
+												
+												final Button pickButton = new Button("Invite");
+												pickButton.addClickHandler(new ClickHandler() {
+													public void onClick(ClickEvent event) {
+														Planner.showActivityIndicator();
+														CInvitation invitation = new CInvitation(user.getEncodedUsername(), trip.getTripId());
+														Planner.datastoreService.sendInvitation(invitation, new AsyncCallback<Long>() {
+															public void onFailure(
+																	Throwable caught) {
+																// Show the RPC error message to the user
+																caught.printStackTrace();
+																System.out
+																		.println("Remote Procedure Call - Failure");
+																Planner.hideActivityIndicator();
+															}
+	
+															public void onSuccess(
+																	Long result) {
+																hide();
+																Planner.hideActivityIndicator();
+																describeTrip(trip);
+															}
+														});
+													}
+												});
+												inviteePanel.add(pickButton);
+												
+												inviteesPanel.add(inviteePanel);
+											}
 										}
 									}
 									Planner.hideActivityIndicator();
