@@ -92,7 +92,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 				});
 	}
 	
-	private void describeTrip (final CTrip trip) {
+	private void describeTrip (final CTrip trip, boolean isCreator) {
 		this.trip = trip;
 		
 		Planner.setState(State.TRIP);

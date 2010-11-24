@@ -92,6 +92,15 @@ public class DatastoreServiceImpl extends RemoteServiceServlet implements
 			for (STrip trip : results) {
 				trips.add(trip.getCTrip());
 			}
+			List<SInvitation> results2 = (List<SInvitation>) pm.newQuery(SInvitation.class, "encodedUsername == '" + encodedUsername + "'").execute();
+			for (SInvitation invitation : results2) {
+				if (invitation.isConfirmed() && invitation.getEncodedUsername().equals(encodedUsername)) {
+					CTrip trip = pm.getObjectById(STrip.class, invitation.getTripId()).getCTrip();
+					if (!trips.contains(trip)) {
+						trips.add(trip);
+					}
+				}
+			}
         } finally {
             pm.close();
         }
