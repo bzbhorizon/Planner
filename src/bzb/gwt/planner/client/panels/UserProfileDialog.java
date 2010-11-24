@@ -32,9 +32,9 @@ public class UserProfileDialog extends DialogBox {
 				
 				dp.add(info, DockPanel.CENTER);
 				
-				center();
-				
 				Planner.hideActivityIndicator();
+				
+				center();
 			}
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
@@ -51,6 +51,7 @@ public class UserProfileDialog extends DialogBox {
 		dp.add(close, DockPanel.SOUTH);
 		
 		setWidget(dp);
+		setGlassEnabled(true);
 		
 		center();
 	}

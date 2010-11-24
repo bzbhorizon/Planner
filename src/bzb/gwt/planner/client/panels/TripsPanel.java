@@ -49,6 +49,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 						trips = result;
 						
 						final HorizontalPanel hp = new HorizontalPanel();
+						hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 						final Button newTrip = new Button("Create new trip");
 						newTrip.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
@@ -92,7 +93,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 				});
 	}
 	
-	private void describeTrip (final CTrip trip, boolean isCreator) {
+	private void describeTrip (final CTrip trip) {
 		this.trip = trip;
 		
 		Planner.setState(State.TRIP);
@@ -103,14 +104,18 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		add(new HTML("Started planning at " + Utility.formatDateTime(trip.getCreationTime())));
 		
 		Button delete = new Button("Delete trip");
-		delete.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dd = new DeleteDialog(trip);
-			}
-		});
+		if (Planner.getUser().getEncodedUsername().equals(trip.getEncodedUsername())) {
+			delete.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					dd = new DeleteDialog(trip);
+				}
+			});
+		} else {
+			delete.setEnabled(false);
+		}
 		add(delete);
 		
-		Button edit = new Button("Edit trip");
+		Button edit = new Button("Itinerary");
 		edit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				Planner.setTrip(trip);
@@ -143,27 +148,36 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 								if (invitee.getInvitation().isConfirmed()) {
 									buttonText += "(accepted invite at " + Utility.formatDateTime(invitee.getInvitation().getConfirmationTime()) + ")";
 								} else {
-									buttonText += "(invitation issed at " + Utility.formatDateTime(invitee.getInvitation().getCreationTime()) + " not yet accepted)";
+									buttonText += "(invitation sent at " + Utility.formatDateTime(invitee.getInvitation().getCreationTime()) + " not yet accepted)";
 								}
 								final Button userButton = new Button(buttonText);
+								userButton.addClickHandler(new ClickHandler() {
+									public void onClick(ClickEvent event) {
+										Planner.showUpdFor(invitee.getInvitee().getUsername());
+									}
+								});
 								inviteePanel.add(userButton);
 								
 								final Button deleteUser = new Button("Cancel invitation");
-								deleteUser.addClickHandler(new ClickHandler() {
-									public void onClick(ClickEvent event) {
-										Planner.datastoreService.deleteInvitation(invitee.getInvitation().getConnectionId(), new AsyncCallback<String>() {
-											public void onFailure(
-													Throwable caught) {
-												caught.printStackTrace();
-												System.out
-														.println("Remote Procedure Call - Failure");
-											}
-											public void onSuccess(String result) {
-												describeTrip(trip);
-											}
-										});
-									}
-								});
+								if (Planner.getUser().getEncodedUsername().equals(trip.getEncodedUsername())) {
+									deleteUser.addClickHandler(new ClickHandler() {
+										public void onClick(ClickEvent event) {
+											Planner.datastoreService.deleteInvitation(invitee.getInvitation().getConnectionId(), new AsyncCallback<String>() {
+												public void onFailure(
+														Throwable caught) {
+													caught.printStackTrace();
+													System.out
+															.println("Remote Procedure Call - Failure");
+												}
+												public void onSuccess(String result) {
+													describeTrip(trip);
+												}
+											});
+										}
+									});
+								} else {
+									deleteUser.setEnabled(false);
+								}
 								inviteePanel.add(deleteUser);
 								
 								inviteesPanel.add(inviteePanel);
@@ -175,11 +189,15 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		add(inviteesPanel);
 		
 		Button invite = new Button("Invite another traveller");
-		invite.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				id = new InviteDialog();
-			}
-		});
+		if (Planner.getUser().getEncodedUsername().equals(trip.getEncodedUsername())) {
+			invite.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					id = new InviteDialog();
+				}
+			});
+		} else {
+			invite.setEnabled(false);
+		}
 		add(invite);
 	}
 
@@ -271,7 +289,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 									if (results != null) {
 										for (final CUser user : results) {
 											if (!user.getEncodedUsername().equals(Planner.getUser().getEncodedUsername())) {
-												HorizontalPanel inviteePanel = new HorizontalPanel();
+												final HorizontalPanel inviteePanel = new HorizontalPanel();
 												
 												final Button profileButton = new Button(user.getFullName());
 												profileButton.addClickHandler(new ClickHandler() {
@@ -305,6 +323,27 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 														});
 													}
 												});
+												
+												Planner.datastoreService.getInviteesFor(trip.getTripId(),
+														new AsyncCallback<List<CInviteeInfo>>() {
+														public void onFailure(Throwable caught) {
+															// Show the RPC error message to the user
+															caught.printStackTrace();
+															System.out
+																	.println("Remote Procedure Call - Failure");
+															Planner.hideActivityIndicator();
+														}
+
+														public void onSuccess(List<CInviteeInfo> results) {
+															for (CInviteeInfo invitee : results) {
+																if (invitee.getInvitee().getUsername().equals(user.getUsername())) {
+																	pickButton.setEnabled(false);
+																	pickButton.setText("Already invited");
+																}
+															}
+														}
+												});
+																
 												inviteePanel.add(pickButton);
 												
 												inviteesPanel.add(inviteePanel);

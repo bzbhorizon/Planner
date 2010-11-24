@@ -37,16 +37,83 @@
 }
 
 .gwt-Button {
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#aaaaaa') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#aaa)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #eee,  #aaa) !important; /* for firefox 3.6+ */
 	border: none !important;
-	border-bottom: 5px solid white !important;
 	margin: 2px !important;
 	background: rgba(255, 255, 255, 0.5) !important;
 	padding: 10px !important;
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 6pt;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, .3) !important;
+	-webkit-border-radius: 0.2em;
+	-moz-border-radius: 0.2em;
+	-webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, .4);
+	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, .4);
+	box-shadow: 0 2px 2px rgba(0, 0, 0, .4);
 	}
 
-.gwt-Button-hover {
-	border: 1px solid red !important;
+.gwt-Button:hover {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bbbbbb', endColorstr='#eeeeee') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#eee)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #bbb,  #eee) !important; /* for firefox 3.6+ */	
+}
+
+.gwt-DialogBox {
+	border: none !important;
+	background: rgba(255,255,255,0.9) !important;
+	padding: 20px !important;
+	margin: 50px !important;
+}
+
+.gwt-DialogBox .Caption {
+	color: black;
+	padding: 0px !important;
+	margin: 0px 0px 20px 0px !important;
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogContent {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+.gwt-DialogBox .dialogMiddleCenter {
+	padding: 0px !important;
+	margin: 0px !important;
+	border: none !important;
+	background: transparent !important;
+}
+
+.gwt-DialogBox .dialogBottomCenter {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogMiddleLeft {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogMiddleRight {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogTopLeft {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogTopRight {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogBottomLeft {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogBottomRight {
+	border: none !important;
+	background: transparent !important;
 }
