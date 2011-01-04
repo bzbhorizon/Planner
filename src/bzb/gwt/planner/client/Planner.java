@@ -5,7 +5,7 @@ import bzb.gwt.planner.client.data.CUser;
 import bzb.gwt.planner.client.panels.HQPanel;
 import bzb.gwt.planner.client.panels.LoginPanel;
 import bzb.gwt.planner.client.panels.PlannerPanel;
-import bzb.gwt.planner.client.panels.PlanningPanel;
+import bzb.gwt.planner.client.panels.ItineraryPanel;
 import bzb.gwt.planner.client.panels.TripsPanel;
 import bzb.gwt.planner.client.panels.UserProfileDialog;
 import bzb.gwt.planner.shared.Paths;
@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class Planner implements EntryPoint {
 	
-	public static enum State {WELCOME, HQ, TRIPS, TRIP, PLANNING};
+	public static enum State {WELCOME, HQ, TRIPS, TRIP, ITINERARY};
 	private static State state = State.WELCOME;
 	
 	public static final SignInServiceAsync signinService = GWT.create(SignInService.class);
@@ -127,10 +127,8 @@ public class Planner implements EntryPoint {
 					tripsPanel = new TripsPanel();
 				}
 				return tripsPanel;
-			} else if (state == State.PLANNING) {
-				if (planningPanel == null) {
-					planningPanel = new PlanningPanel(getTrip());
-				}
+			} else if (state == State.ITINERARY) {
+				planningPanel = new ItineraryPanel(getTrip());
 				return planningPanel;
 			} else {
 				return null;

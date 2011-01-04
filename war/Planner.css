@@ -37,12 +37,12 @@
 }
 
 .gwt-Button {
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#aaaaaa') !important; /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#aaa)) !important; /* for webkit browsers */
-	background: -moz-linear-gradient(top,  #eee,  #aaa) !important; /* for firefox 3.6+ */
+	background: rgba(255, 255, 255, 0.5) !important;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#bbbbbb') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#bbb)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #eee,  #bbb) !important; /* for firefox 3.6+ */
 	border: none !important;
 	margin: 2px !important;
-	background: rgba(255, 255, 255, 0.5) !important;
 	padding: 10px !important;
 	font-weight: bold;
 	text-transform: uppercase;
@@ -62,6 +62,34 @@
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#bbbbbb', endColorstr='#eeeeee') !important; /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, from(#bbb), to(#eee)) !important; /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #bbb,  #eee) !important; /* for firefox 3.6+ */	
+}
+
+.segment {
+	background: rgba(255, 255, 255, 0.5) !important;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#bbbbbb') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#bbb)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #eee,  #bbb) !important; /* for firefox 3.6+ */
+	border: 1px dotted white !important;
+	-webkit-border-radius: 1em;
+	-moz-border-radius: 1em;
+	-webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, .4);
+	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, .4);
+	box-shadow: 0 2px 2px rgba(0, 0, 0, .4);
+	padding: 10px;
+}
+
+.travelSegment {
+	background: rgba(0, 255, 0, 0.5) !important;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#00ee00') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#0e0)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #eee,  #0e0) !important; /* for firefox 3.6+ */
+}
+
+.accomSegment {
+	background: rgba(0, 0, 255, 0.5) !important;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#0000ee') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#00e)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #eee,  #00e) !important; /* for firefox 3.6+ */
 }
 
 .gwt-DialogBox {

@@ -34,6 +34,10 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		clear();
 		
 		Planner.showActivityIndicator();
+		
+		final VerticalPanel vp = new VerticalPanel();
+		add(vp);
+		
 		trips = new ArrayList<CTrip>();
 		Planner.datastoreService.getTripsFor(Planner.getUser().getEncodedUsername(),
 				new AsyncCallback<List<CTrip>>() {
@@ -71,21 +75,24 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 							}
 						});
 						hp.add(newTrip);
-						add(hp);
+						vp.add(hp);
 						
 						if (trips.size() > 0) {
 							for (final CTrip trip : trips) {
 								Button tripButton = new Button(trip.getName());
+								if (!trip.getEncodedUsername().equals(Planner.getUser().getEncodedUsername())) {
+									tripButton.setText(tripButton.getText() + " (invited)");
+								}
 								tripButton.addClickHandler(new ClickHandler() {
 									public void onClick(ClickEvent event) {
 										addNavButton(new Button(trip.getName()));
 										describeTrip(trip);	
 									}
 								});
-								add(tripButton);
+								vp.add(tripButton);
 							}
 						} else {
-							add (new HTML("No saved trips"));
+							vp.add (new HTML("No saved trips"));
 						}	
 						
 						Planner.hideActivityIndicator();
@@ -119,7 +126,7 @@ public class TripsPanel extends PlannerPanel implements IPlannerPanel {
 		edit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				Planner.setTrip(trip);
-				Planner.updateContent(State.PLANNING);
+				Planner.updateContent(State.ITINERARY);
 			}
 		});
 		add(edit);

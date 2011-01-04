@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="/Users/bzb/Documents/jars/gwt-dnd-3.0.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/openid4java-0.9.5.593-gaehacks.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/GWT FX v0.5.0 MS 1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dnd-3.0.1.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
