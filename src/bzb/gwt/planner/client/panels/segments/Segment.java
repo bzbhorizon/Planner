@@ -9,6 +9,9 @@ public abstract class Segment extends FocusPanel {
 	private final PickupDragController dragController;
 	private DropController dropController = new SegmentSetWidgetDropContoller(
 			this);
+	
+	private int x = 0;
+	private int y = 0;
 
 	public Segment(PickupDragController dragController) {
 		this.dragController = dragController;
@@ -28,5 +31,21 @@ public abstract class Segment extends FocusPanel {
 	protected void onUnload() {
 		super.onUnload();
 		dragController.unregisterDropController(dropController);
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getY() {
+		return y;
 	}
 }

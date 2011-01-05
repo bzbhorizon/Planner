@@ -1,13 +1,14 @@
 package bzb.gwt.planner.client.data;
 
 import java.io.Serializable;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.ArrayList;
 
 import bzb.gwt.planner.client.DatastoreService;
 import bzb.gwt.planner.client.DatastoreServiceAsync;
 import bzb.gwt.planner.client.Planner;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CTrip implements Serializable {
 	
@@ -16,10 +17,14 @@ public class CTrip implements Serializable {
     private String encodedUsername;
 	private String name;
 	private long creationTime;
+	private ArrayList<CSegment> segments;
 	
-	public CTrip () {}
+	public CTrip () {
+		
+	}
 	
 	public CTrip (String name, String encodedUsername) {
+		this();
 		setName(name);
 		setEncodedUsername(encodedUsername);
 	}
@@ -95,6 +100,17 @@ public class CTrip implements Serializable {
 				Planner.hideActivityIndicator();
 			}
 		});
+	}
+
+	public void setSegments(ArrayList<CSegment> segments) {
+		this.segments = segments;
+	}
+
+	public ArrayList<CSegment> getSegments() {
+		if (segments == null) {
+			segments = new ArrayList<CSegment>();
+		}
+		return segments;
 	}
 
 }

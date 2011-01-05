@@ -1,6 +1,10 @@
 package bzb.gwt.planner.client.panels;
 
+import java.util.ArrayList;
+
 import bzb.gwt.planner.client.Planner.State;
+import bzb.gwt.planner.client.data.CAccommodation;
+import bzb.gwt.planner.client.data.CSegment;
 import bzb.gwt.planner.client.data.CTrip;
 import bzb.gwt.planner.client.panels.segments.AccommodationSegment;
 import bzb.gwt.planner.client.panels.segments.Segment;
@@ -49,7 +53,8 @@ public class ItineraryPanel extends PlannerPanel implements IPlannerPanel {
 				
 			}
 			public void onDragEnd(DragEndEvent event) {
-				
+				((Segment)event.getContext().draggable).setX(event.getContext().draggable.getElement().getOffsetLeft());
+				((Segment)event.getContext().draggable).setY(event.getContext().draggable.getElement().getOffsetTop());
 			}
 		});
 	    
@@ -81,6 +86,26 @@ public class ItineraryPanel extends PlannerPanel implements IPlannerPanel {
 		save.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 			    System.out.println("Save");
+			    int a = 0;
+			    int t = 0;
+			    ArrayList<CSegment> segments = new ArrayList<CSegment>();
+			    for (int i = 0; i < ap.getWidgetCount(); i++) {
+			    	CSegment segment = null;
+			    	if (ap.getWidget(i).getClass().equals(TravelSegment.class)) {
+			    		System.out.println("t" + t++);
+			    		segment = new CTravel();
+			    	} else if (ap.getWidget(i).getClass().equals(AccommodationSegment.class)) {
+			    		System.out.println("a" + a++);
+			    		segment = new CAccommodation();
+			    	}
+			    	if (segment != null) {
+			    		segment.setX(((Segment)ap.getWidget(i)).getX());
+			    		segment.setY(((Segment)ap.getWidget(i)).getY());
+			    		
+			    		segments.add(segment);
+			    	}
+			    }
+			    ItineraryPanel.this.trip.setSegments(segments);
 			}
 		});
 		savePanel.add(save);
