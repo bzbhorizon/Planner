@@ -1,123 +1,104 @@
 package bzb.gwt.planner.client.panels;
 
-import java.util.ArrayList;
-
 import bzb.gwt.planner.client.Planner.State;
-import bzb.gwt.planner.client.data.CAccommodation;
-import bzb.gwt.planner.client.data.CSegment;
 import bzb.gwt.planner.client.data.CTrip;
-import bzb.gwt.planner.client.panels.segments.AccommodationSegment;
-import bzb.gwt.planner.client.panels.segments.Segment;
-import bzb.gwt.planner.client.panels.segments.TravelSegment;
+import bzb.gwt.planner.client.panels.itinerary.ActivityPanel;
+import bzb.gwt.planner.client.panels.itinerary.ArriveAccommodationPanel;
+import bzb.gwt.planner.client.panels.itinerary.LeaveAccommodationPanel;
+import bzb.gwt.planner.client.panels.itinerary.TravelPanel;
 
-import com.allen_sauer.gwt.dnd.client.DragEndEvent;
-import com.allen_sauer.gwt.dnd.client.DragHandler;
-import com.allen_sauer.gwt.dnd.client.DragStartEvent;
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
-import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.StackPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ItineraryPanel extends PlannerPanel implements IPlannerPanel {
 	
 	private CTrip trip;
+	private StackPanel sp;
+	
+	private int accomCount = 0;
 	
 	public ItineraryPanel (CTrip trip) {
 		this.trip = trip;
 		
-		DockPanel dp = new DockPanel();
-		dp.setWidth("100%");
-		add(dp);
+		VerticalPanel vp = new VerticalPanel();
+		add(vp);
 		
-		final AbsolutePanel ap = new AbsolutePanel();
-		add(ap);
-		ap.setWidth("100%");
-		ap.setHeight("600px");
-		// initialize our drag controller
-	    final PickupDragController dragController = new PickupDragController(ap, true);
-	    dragController.setBehaviorMultipleSelection(false);
-	    dragController.addDragHandler(new DragHandler() {
-			public void onPreviewDragStart(DragStartEvent event)
-					throws VetoDragException {
-				
-			}
-			public void onPreviewDragEnd(DragEndEvent event) throws VetoDragException {
-				
-			}
-			public void onDragStart(DragStartEvent event) {
-				
-			}
-			public void onDragEnd(DragEndEvent event) {
-				((Segment)event.getContext().draggable).setX(event.getContext().draggable.getElement().getOffsetLeft());
-				((Segment)event.getContext().draggable).setY(event.getContext().draggable.getElement().getOffsetTop());
-			}
-		});
-	    
-	    HorizontalPanel addPanel = new HorizontalPanel();
-	    Button newTravel = new Button("New travel");
-		newTravel.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-			    Segment s = new TravelSegment(dragController);
-			    ap.add(s);
-			    dragController.makeDraggable(s);
-			}
-		});
-		addPanel.add(newTravel);
-	    
-		Button newAccom = new Button("New accommodation");
+		HorizontalPanel hp = new HorizontalPanel();
+		vp.add(hp);
+		
+		sp = new StackPanel();
+		vp.add(sp);
+		
+		Button newAccom = new Button("New Accommodation");
 		newAccom.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-			    Segment s = new AccommodationSegment(dragController);
-			    ap.add(s);
-			    dragController.makeDraggable(s);
+				sp.add(new ArriveAccommodationPanel("Arrive accom", accomCount));
+				sp.add(new LeaveAccommodationPanel("Leave accom", accomCount++));
+				resetStackTexts();
 			}
 		});
-		addPanel.add(newAccom);
-		dp.add(addPanel, DockPanel.WEST);
+		hp.add(newAccom);
 		
-		dp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		HorizontalPanel savePanel = new HorizontalPanel();
-		Button save = new Button("Save");
-		save.addClickHandler(new ClickHandler() {
+		Button newTravel = new Button("New Travel");
+		newTravel.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-			    System.out.println("Save");
-			    int a = 0;
-			    int t = 0;
-			    ArrayList<CSegment> segments = new ArrayList<CSegment>();
-			    for (int i = 0; i < ap.getWidgetCount(); i++) {
-			    	CSegment segment = null;
-			    	if (ap.getWidget(i).getClass().equals(TravelSegment.class)) {
-			    		System.out.println("t" + t++);
-			    		segment = new CTravel();
-			    	} else if (ap.getWidget(i).getClass().equals(AccommodationSegment.class)) {
-			    		System.out.println("a" + a++);
-			    		segment = new CAccommodation();
-			    	}
-			    	if (segment != null) {
-			    		segment.setX(((Segment)ap.getWidget(i)).getX());
-			    		segment.setY(((Segment)ap.getWidget(i)).getY());
-			    		
-			    		segments.add(segment);
-			    	}
-			    }
-			    ItineraryPanel.this.trip.setSegments(segments);
+				sp.add(new TravelPanel("Travel"));
+				resetStackTexts();
 			}
 		});
-		savePanel.add(save);
+		hp.add(newTravel);
 		
-		Button revert = new Button("Revert");
-		revert.addClickHandler(new ClickHandler() {
+		Button newActivity = new Button("New Activity");
+		newActivity.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-			    System.out.println("Revert");
+				sp.add(new ActivityPanel("Activity"));
+				resetStackTexts();
 			}
 		});
-		savePanel.add(revert);
-		dp.add(savePanel, DockPanel.EAST);
+		hp.add(newActivity);
+		
+		Button moveUp = new Button("Move up");
+		moveUp.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int selected = sp.getSelectedIndex();
+				if (selected > 0) {
+					Widget w = sp.getWidget(selected);
+					if (w.getClass().equals(LeaveAccommodationPanel.class) && !(sp.getWidget(selected - 1).getClass().equals(LeaveAccommodationPanel.class) && (((LeaveAccommodationPanel)sp.getWidget(selected - 1)).getId() == ((LeaveAccommodationPanel)w).getId()))) {
+						sp.remove(selected);
+						sp.insert(w, selected - 1);
+						sp.showStack(selected - 1);
+						resetStackTexts();
+					}
+				}
+			}
+		});
+		hp.add(moveUp);
+		
+		Button moveDown = new Button("Move down");
+		moveDown.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int selected = sp.getSelectedIndex();
+				if (selected < sp.getWidgetCount() - 1) {
+					Widget w = sp.getWidget(selected);
+					sp.remove(selected);
+					sp.insert(w, selected + 1);
+					sp.showStack(selected + 1);
+					resetStackTexts();
+				}
+			}
+		});
+		hp.add(moveDown);
+	}
+	
+	private void resetStackTexts () {
+		for (int i = 0; i < sp.getWidgetCount(); i++) {
+			sp.setStackText(i, sp.getWidget(i).getTitle());
+		}
 	}
 	
 	public HorizontalPanel getNav() {

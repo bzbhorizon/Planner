@@ -64,7 +64,7 @@
 	background: -moz-linear-gradient(top,  #bbb,  #eee) !important; /* for firefox 3.6+ */	
 }
 
-.segment {
+.travelPanel, .activityPanel, .accomPanel {
 	background: rgba(255, 255, 255, 0.5) !important;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#bbbbbb') !important; /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#bbb)) !important; /* for webkit browsers */
@@ -78,18 +78,25 @@
 	padding: 10px;
 }
 
-.travelSegment {
+.travelPanel {
 	background: rgba(0, 255, 0, 0.5) !important;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#00ee00') !important; /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#0e0)) !important; /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #eee,  #0e0) !important; /* for firefox 3.6+ */
 }
 
-.accomSegment {
+.accomPanel {
 	background: rgba(0, 0, 255, 0.5) !important;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#0000ee') !important; /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#00e)) !important; /* for webkit browsers */
 	background: -moz-linear-gradient(top,  #eee,  #00e) !important; /* for firefox 3.6+ */
+}
+
+.activityPanel {
+	background: rgba(255, 0, 0, 0.5) !important;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ee0000') !important; /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#e00)) !important; /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #eee,  #e00) !important; /* for firefox 3.6+ */
 }
 
 .gwt-DialogBox {
